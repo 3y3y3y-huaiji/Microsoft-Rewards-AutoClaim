@@ -20,6 +20,10 @@ async function openDailySets(): Promise<void> {
         link.click();
         await wait(1000 + getRndInteger(0, 1000));
     }
+    // Signal the background that every daily-set link has been opened, so it can
+    // close the dashboard tab now instead of on a fixed timer that could cut a
+    // long run short.
+    browser.runtime.sendMessage({ action: 'dailyDone' }).catch(() => {});
 }
 
 // Resolve as soon as the daily-set anchors appear (they render async).
