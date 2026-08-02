@@ -11,6 +11,9 @@ const ALARM_NAME = 'openTabAlarm';
 // Opens tab #1 immediately (currentSearch = 1), then schedules the rest via alarm.
 export async function startSearches(searchTimeout: number, searches: number, closeTimeSeconds: number, useWords: boolean): Promise<void> {
     await setStorageItems({ isSearching: true, currentSearch: 1 }, StorageValues.SYNC);
+    // Tell the popup a run actually began, so its button flips to "Stop
+    // searches" only when searches are really running (not on a daily-set-only run).
+    browser.runtime.sendMessage({ action: 'searchStarted' }).catch(() => {});
     await openSearchTab(useWords, closeTimeSeconds * 1000);
     if (shouldOpenMore(1, searches)) {
         browser.alarms.create(ALARM_NAME, { delayInMinutes: nextDelayMinutes(searchTimeout) });

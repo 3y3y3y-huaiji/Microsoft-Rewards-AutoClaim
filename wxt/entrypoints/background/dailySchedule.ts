@@ -9,7 +9,12 @@ import { startSearches } from './searchRunner';
 
 const WEBSITE_URL = 'https://svitspindler.com/microsoft-automatic-rewards';
 
-export async function runRewards(manualCall = false): Promise<void> {
+// Runs whatever the user has enabled: the daily set if "Open daily set
+// automatically" is on, and the Bing searches if "Do daily searches
+// automatically" is on. Both the automatic daily trigger and the popup's
+// "Get rewards" button call this, so the button respects the same toggles
+// rather than forcing searches.
+export async function runRewards(): Promise<void> {
     const s = await getStorageItems(['searches', 'timeout', 'closeTime', 'useWords', 'autoDaily', 'active'], StorageValues.SYNC);
     const searchTimeout = toInt(s.timeout, DEFAULTS.timeout);
     const searches = toInt(s.searches, DEFAULTS.searches);
@@ -19,7 +24,7 @@ export async function runRewards(manualCall = false): Promise<void> {
     const autoTabs = s.active ?? DEFAULTS.active;
 
     if (autoDaily) await openDailyRewards();
-    if ((manualCall || autoTabs) && searches > 0) {
+    if (autoTabs && searches > 0) {
         await startSearches(searchTimeout, searches, closeTime, useWords);
     }
 }

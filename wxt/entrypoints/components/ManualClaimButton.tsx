@@ -17,7 +17,8 @@ function ManualClaimButton() {
 
     useEffect(() => {
         const listener = (request: { action?: string }) => {
-            if (request.action === 'searchEnded') setIsSearching(false);
+            if (request.action === 'searchStarted') setIsSearching(true);
+            else if (request.action === 'searchEnded') setIsSearching(false);
         };
         browser.runtime.onMessage.addListener(listener);
         return () => browser.runtime.onMessage.removeListener(listener);
@@ -28,7 +29,9 @@ function ManualClaimButton() {
             setIsSearching(false);
             browser.runtime.sendMessage({ action: 'stop' });
         } else {
-            setIsSearching(true);
+            // Don't optimistically flip to "searching" — the background only
+            // starts searches if that toggle is on, and emits `searchStarted`
+            // when it does. A daily-set-only run leaves the button unchanged.
             browser.runtime.sendMessage({ action: 'popup' });
         }
     }
