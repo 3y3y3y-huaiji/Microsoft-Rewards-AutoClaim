@@ -1,0 +1,104 @@
+import './App.css';
+import { useEffect, useState } from 'react';
+import { useStorage } from '@/entrypoints/hooks/useStorage';
+import { StorageValues } from '@/entrypoints/enums/storageValues';
+import { DEFAULTS } from '@/entrypoints/utils/settings';
+import { setBadgeText } from '@/entrypoints/utils/browserAction';
+import NumberInput from '@/entrypoints/components/NumberInput';
+import SearchModeToggle from '@/entrypoints/components/SearchModeToggle';
+import ManualClaimButton from '@/entrypoints/components/ManualClaimButton';
+
+function App() {
+    const [active, setActive] = useStorage<boolean>('active', DEFAULTS.active, StorageValues.SYNC);
+    const [autoDaily, setAutoDaily] = useStorage<boolean>('autoDaily', DEFAULTS.autoDaily, StorageValues.SYNC);
+    const [searches, setSearches] = useStorage<number>('searches', DEFAULTS.searches, StorageValues.SYNC);
+    const [timeout, setTimeoutValue] = useStorage<number>('timeout', DEFAULTS.timeout, StorageValues.SYNC);
+    const [closeTime, setCloseTime] = useStorage<number>('closeTime', DEFAULTS.closeTime, StorageValues.SYNC);
+    const [useWords, setUseWords] = useStorage<boolean>('useWords', DEFAULTS.useWords, StorageValues.SYNC);
+    const [donateHover, setDonateHover] = useState(false);
+
+    useEffect(() => { setBadgeText(''); }, []);
+
+    return (
+        <>
+            <h3 className="container-fluid text-center mt-2 heading">Microsoft automatic rewards</h3>
+            <div className="container-fluid text-center my-2">
+                <a href="https://svitspindler.com/microsoft-automatic-rewards" className="float-start links" target="_blank">Help</a>
+                <a href="https://svitspindler.com/microsoft-automatic-rewards/mobile/test-app" className="float-start links" target="_blank">Mobile</a>
+                <a className="links" href="https://svitspindler.com/contact" target="_blank" id="contact">Contact Me</a>
+            </div>
+
+            <div className="text-center">
+                <ManualClaimButton />
+                <div className="checkboxes">
+                    <div className="input-with-info">
+                        <input className="form-check-input" type="checkbox" id="autoCheckbox" checked={active} onChange={(e) => setActive(e.target.checked)} />
+                        <label htmlFor="autoCheckbox">Do daily searches automatically</label>
+                        <span className="tooltip-icon info" data-tooltip="Opens bing tabs the first time browser opens every day">ℹ</span>
+                    </div>
+                    <div className="input-with-info">
+                        <input className="form-check-input" type="checkbox" id="autoDaily" checked={autoDaily} onChange={(e) => setAutoDaily(e.target.checked)} />
+                        <label htmlFor="autoDaily">Open daily set automatically</label>
+                        <span className="tooltip-icon info" data-tooltip="Opens bing rewards tab and completes daily tasks for extra points">ℹ</span>
+                    </div>
+                </div>
+                <div className="subtext mb-md">*allow popups at rewards.bing to work</div>
+
+                <div className="left-align small-title">
+                    <div className="ml-2">Extension for free games:</div>
+                    <ul className="earn-list">
+                        <li>
+                            <a href="https://chromewebstore.google.com/detail/free-game-claimer-for-ste/mndghaafpgiinfecbbbcppppiblmjepk" className="normal-link" target="_blank" style={{ display: 'flex', alignItems: 'center', width: '100%', height: '100%' }}>
+                                <img src="/imgs/free-games.png" alt="free games" className="earn-logo" />
+                                Free games claimer for Steam & Epic
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div className="left-align ml-2 small-title">Mobile app to earn more points:</div>
+                <div className="website-header">
+                    <div className="qr-code-with-text">
+                        <img src="/imgs/svgs/qr-code-app.svg" alt="QR code" className="qr-code" />
+                        <span className="website-phone-text">Scan on phone</span>
+                    </div>
+                    <a href="https://play.google.com/store/apps/details?id=com.spin311.microsoft_automatic_rewards" className="website-phone normal-link no-underline try-mobile" target="_blank" rel="noopener noreferrer">
+                        <img className="website-phone-image" src="/imgs/mar-phone.png" alt="Microsoft Automatic Rewards Phone App" />
+                        <div className="normal-color">Download App</div>
+                    </a>
+                </div>
+
+                <div className="inputs">
+                    <div className="width-100">
+                        <div className="input-with-info">
+                            <NumberInput id="searches" label="Number of searches" value={searches} min={1} max={999} onChange={setSearches} />
+                            <span className="tooltip-icon info" data-tooltip="Number of random tabs to open in bing">ℹ</span>
+                        </div>
+                    </div>
+                    <div>
+                        <NumberInput id="timeout" label="Time between searches (s)" value={timeout} min={0} max={9999} onChange={setTimeoutValue} />
+                        <div className="subtext initial-text">*Set to 500 if your points are stuck</div>
+                    </div>
+                    <div>
+                        <NumberInput id="closeTime" label="Time before closing tabs (s)" value={closeTime} min={0} max={300} onChange={setCloseTime} />
+                    </div>
+                </div>
+            </div>
+
+            <SearchModeToggle useWords={useWords} onChange={setUseWords} />
+
+            <div className="container-fluid text-center mt-2">
+                <span>
+                    <a href="https://github.com/spin311/MicrosoftRewardsWebsite" className="float-start links" target="_blank">Github</a>
+                    <img src="/imgs/github.png" alt="github-logo" />
+                </span>
+                <a className="links" href="https://rewards.bing.com/" target="_blank" id="rewardsLink">Rewards</a>
+                <span className="float-end" style={{ display: 'flex', alignItems: 'center' }}>
+                    <a href="https://svitspindler.com/donate" className="links" target="_blank" id="donateText" onMouseOver={() => setDonateHover(true)}>Donate</a>
+                    <img src="/imgs/justAGirlSmol.png" alt="Cat" id="donateImg" style={{ visibility: donateHover ? 'visible' : 'hidden' }} />
+                </span>
+            </div>
+        </>
+    );
+}
+
+export default App;
