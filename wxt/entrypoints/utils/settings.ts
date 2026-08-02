@@ -2,7 +2,7 @@
 // background reads (fallbacks), and the popup's useStorage defaults.
 export const DEFAULTS = {
     active: true,
-    autoDaily: false,
+    autoDaily: true,
     timeout: 60,
     searches: 12,
     closeTime: 5,
