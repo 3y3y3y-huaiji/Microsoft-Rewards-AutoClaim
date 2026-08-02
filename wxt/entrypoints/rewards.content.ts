@@ -1,6 +1,5 @@
 import { defineContentScript } from '#imports';
 import { browser } from 'wxt/browser';
-import { getRndInteger, wait } from '@/entrypoints/utils/helpers';
 import { matchDailyAnchors } from '@/entrypoints/utils/dailyAnchors';
 import { oncePerPageRun } from '@/entrypoints/utils/oncePerPageRun';
 
@@ -16,14 +15,11 @@ export default defineContentScript({
 
 async function openDailySets(): Promise<void> {
     const anchors = await waitForDailyAnchors();
-    for (const link of anchors) {
-        link.click();
-        await wait(1000 + getRndInteger(0, 1000));
-    }
-    // Signal the background that every daily-set link has been opened, so it can
-    // close the dashboard tab now instead of on a fixed timer that could cut a
-    // long run short.
-    browser.runtime.sendMessage({ action: 'dailyDone' }).catch(() => {});
+    // The content script can't open/close tabs, so hand the daily-set link URLs
+    // to the background, which opens each in its own tab and closes it after a
+    // few seconds. This also lets the background close the dashboard tab now.
+    const links = anchors.map((anchor) => anchor.href);
+    browser.runtime.sendMessage({ action: 'openDailyLinks', data: links }).catch(() => {});
 }
 
 // Resolve as soon as the daily-set anchors appear (they render async).
