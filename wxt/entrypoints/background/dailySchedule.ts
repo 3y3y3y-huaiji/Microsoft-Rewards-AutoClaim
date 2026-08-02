@@ -2,7 +2,7 @@ import { browser } from 'wxt/browser';
 import { getStorageItems, setStorageItem, setStorageItems } from '@/entrypoints/hooks/useStorage';
 import { StorageValues } from '@/entrypoints/enums/storageValues';
 import { toInt } from '@/entrypoints/utils/search';
-import { DEFAULTS } from '@/entrypoints/settings';
+import { DEFAULTS } from '@/entrypoints/utils/settings';
 import { setBadgeText } from '@/entrypoints/utils/browserAction';
 import { openDailyRewards } from './dailyRewards';
 import { startSearches } from './searchRunner';

@@ -4,7 +4,7 @@ import { SEARCH_WORDS } from '@/entrypoints/data/searchWords';
 import { buildSearchQuery, buildSearchUrl, nextDelayMinutes, shouldOpenMore, toInt } from '@/entrypoints/utils/search';
 import { getStorageItems, setStorageItem, setStorageItems } from '@/entrypoints/hooks/useStorage';
 import { StorageValues } from '@/entrypoints/enums/storageValues';
-import { DEFAULTS } from '@/entrypoints/settings';
+import { DEFAULTS } from '@/entrypoints/utils/settings';
 
 const ALARM_NAME = 'openTabAlarm';
 
