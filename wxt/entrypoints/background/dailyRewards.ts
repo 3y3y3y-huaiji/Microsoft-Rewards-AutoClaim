@@ -12,20 +12,25 @@ const DAILY_LINK_MAX_LINGER_MS = 5000;
 // reports "complete".
 const DAILY_LINK_HARD_CLOSE_MS = 20000;
 
-// Opens the rewards dashboard in a background tab, waits for load, and tells the
-// content script to click the daily-set cards (the click is what credits the
-// points). Each click opens a search in its own tab; those tabs inherit the
-// dashboard as their opener, so we auto-close each one shortly after it loads.
-// The dashboard tab itself closes once the content script reports it finished
-// clicking — or after a safety cap.
+// Opens the rewards dashboard and tells the content script to click the
+// daily-set cards (that click is what credits the points). The dashboard is
+// opened ACTIVE: browsers pause rendering/timers in hidden tabs, so the SPA
+// won't render its daily-set grid — nor keep the click loop running — unless
+// the tab is visible. We restore the user's previous tab when done. Each click
+// opens a search in its own tab (auto-closed shortly after it loads); if such a
+// tab grabs focus we snap it back to the dashboard so it stays rendered.
 export async function openDailyRewards(): Promise<void> {
-    const tab = await browser.tabs.create({ url: 'https://rewards.bing.com/dashboard', active: false });
+    const previousActiveTabId = await getActiveTabId();
+
+    const tab = await browser.tabs.create({ url: 'https://rewards.bing.com/dashboard', active: true });
     const dashboardId = tab.id!;
 
     function onCreated(created: { id?: number; openerTabId?: number }): void {
-        if (created.openerTabId === dashboardId && created.id != null) {
-            closeDailyTabAfterLoad(created.id);
-        }
+        if (created.openerTabId !== dashboardId || created.id == null) return;
+        // Keep the dashboard foregrounded so it stays rendered and keeps
+        // clicking; the search tab still loads in the background and credits.
+        browser.tabs.update(dashboardId, { active: true }).catch(() => {});
+        closeDailyTabAfterLoad(created.id);
     }
     browser.tabs.onCreated.addListener(onCreated);
 
@@ -36,6 +41,9 @@ export async function openDailyRewards(): Promise<void> {
         browser.runtime.onMessage.removeListener(doneListener);
         browser.tabs.onCreated.removeListener(onCreated);
         browser.tabs.remove(dashboardId).catch(() => {});
+        if (previousActiveTabId != null) {
+            browser.tabs.update(previousActiveTabId, { active: true }).catch(() => {});
+        }
     }
 
     function doneListener(message: { action?: string }, sender: { tab?: { id?: number } }): void {
@@ -56,6 +64,15 @@ export async function openDailyRewards(): Promise<void> {
         }
         browser.tabs.onUpdated.addListener(loadListener);
     });
+}
+
+async function getActiveTabId(): Promise<number | undefined> {
+    try {
+        const tabs = await browser.tabs.query({ active: true, lastFocusedWindow: true });
+        return tabs[0]?.id;
+    } catch {
+        return undefined;
+    }
 }
 
 // Close a daily-set search tab a random few seconds after it finishes loading,
