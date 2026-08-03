@@ -3,8 +3,16 @@
 export const DEFAULTS = {
     active: true,
     autoDaily: true,
+    accountLevel: 'member',
     timeout: 60,
     searches: 5,
     closeTime: 5,
-    useWords: true,
 } as const;
+
+// Selecting an account level sets a sensible default number of daily searches
+// (the user can still override the number manually).
+export const LEVEL_SEARCHES: Record<string, number> = {
+    member: 5,
+    silver: 10,
+    gold: 20,
+};

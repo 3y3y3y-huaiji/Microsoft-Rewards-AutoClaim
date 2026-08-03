@@ -15,17 +15,16 @@ const WEBSITE_URL = 'https://svitspindler.com/microsoft-automatic-rewards';
 // "Get rewards" button call this, so the button respects the same toggles
 // rather than forcing searches.
 export async function runRewards(): Promise<void> {
-    const s = await getStorageItems(['searches', 'timeout', 'closeTime', 'useWords', 'autoDaily', 'active'], StorageValues.SYNC);
+    const s = await getStorageItems(['searches', 'timeout', 'closeTime', 'autoDaily', 'active'], StorageValues.SYNC);
     const searchTimeout = toInt(s.timeout, DEFAULTS.timeout);
     const searches = toInt(s.searches, DEFAULTS.searches);
     const closeTime = toInt(s.closeTime, DEFAULTS.closeTime);
-    const useWords = s.useWords ?? DEFAULTS.useWords;
     const autoDaily = s.autoDaily ?? DEFAULTS.autoDaily;
     const autoTabs = s.active ?? DEFAULTS.active;
 
     if (autoDaily) await openDailyRewards();
     if (autoTabs && searches > 0) {
-        await startSearches(searchTimeout, searches, closeTime, useWords);
+        await startSearches(searchTimeout, searches, closeTime);
     }
 }
 
@@ -42,12 +41,12 @@ export async function handleInstallOrUpdate(details: { reason: string }): Promis
     if (details.reason === 'install') {
         await setStorageItems({
             active: DEFAULTS.active,
+            autoDaily: DEFAULTS.autoDaily,
+            accountLevel: DEFAULTS.accountLevel,
             timeout: DEFAULTS.timeout,
             searches: DEFAULTS.searches,
             closeTime: DEFAULTS.closeTime,
-            useWords: DEFAULTS.useWords,
             isSearching: false,
-            autoDaily: DEFAULTS.autoDaily,
         }, StorageValues.SYNC);
         await browser.runtime.setUninstallURL(
             `https://svitspindler.com/uninstall?extension=${encodeURI('Microsoft Automatic Rewards')}`

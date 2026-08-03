@@ -1,4 +1,5 @@
 import { getRndInteger } from '@/entrypoints/utils/helpers';
+import { SEARCH_LEAD_INS, SEARCH_TOPICS, SEARCH_TAILS } from '@/entrypoints/data/searchTerms';
 
 const BING_SEARCH_URL = 'https://www.bing.com/search?q=';
 const BING_SEARCH_PARAMS = '&qs=n&form=QBLH&sp=-1&pq=';
@@ -10,30 +11,30 @@ export function toInt(value: unknown, fallback: number): number {
     return Number.isNaN(n) ? fallback : n;
 }
 
-export function buildSearchQuery(useWords: boolean, words: string[]): string {
-    let body = '';
-    if (useWords) {
-        const count = getRndInteger(3, 5);
-        for (let i = 0; i < count; i++) {
-            body += `${words[getRndInteger(0, words.length - 1)]} `;
-        }
-    } else {
-        body = Math.random().toString(36).substring(2, getRndInteger(5, 8));
-    }
-    const prefix = Math.random().toString(36).substring(2, 3);
-    return `${prefix}${body}`;
+function pick<T>(arr: T[]): T {
+    return arr[getRndInteger(0, arr.length - 1)];
+}
+
+// Build a natural-looking search query from real words — "<lead-in> <topic>" or
+// "<topic> <tail>" — so it reads like a normal search (e.g. "best headphones",
+// "gardening for beginners") with no random-character prefix or gibberish.
+export function buildSearchQuery(): string {
+    const topic = pick(SEARCH_TOPICS);
+    return getRndInteger(0, 1) === 0
+        ? `${pick(SEARCH_LEAD_INS)} ${topic}`
+        : `${topic} ${pick(SEARCH_TAILS)}`;
 }
 
 export function buildSearchUrl(query: string): string {
-    return `${BING_SEARCH_URL}${query}${BING_SEARCH_PARAMS}`;
+    return `${BING_SEARCH_URL}${encodeURIComponent(query)}${BING_SEARCH_PARAMS}`;
 }
 
-// Chrome/Firefox alarms accept minutes; floor at 0.1 so the value is never 0.
-// (Chrome still clamps sub-minute alarms in packed builds regardless.)
 // Fraction of the configured gap used as a symmetric random spread, so the
-// time between searches varies widely (base ±50%) instead of being near-fixed —
-// looks less robotic. Averages the user's configured timeout.
-const DELAY_JITTER_FRACTION = 0.5;
+// time between searches varies widely (base ±75%) instead of being near-fixed —
+// looks less robotic. Averages the user's configured timeout. Chrome/Firefox
+// alarms take minutes; floor at 0.1 so the value is never 0 (Chrome still
+// clamps sub-minute alarms in packed builds regardless).
+const DELAY_JITTER_FRACTION = 0.75;
 
 export function nextDelayMinutes(timeoutSeconds: number, jitterMs?: number): number {
     const baseMs = Math.max(timeoutSeconds, 1) * 1000;

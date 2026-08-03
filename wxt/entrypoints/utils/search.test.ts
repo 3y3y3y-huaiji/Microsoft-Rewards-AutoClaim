@@ -1,5 +1,10 @@
 import { describe, it, expect } from 'vitest';
 import { toInt, buildSearchQuery, buildSearchUrl, nextDelayMinutes, shouldOpenMore } from './search';
+import { SEARCH_LEAD_INS, SEARCH_TOPICS, SEARCH_TAILS } from '../data/searchTerms';
+
+const VOCAB = new Set(
+  [...SEARCH_LEAD_INS, ...SEARCH_TOPICS, ...SEARCH_TAILS].flatMap((phrase) => phrase.split(' '))
+);
 
 describe('toInt', () => {
   it('parses integer strings', () => {
@@ -16,30 +21,29 @@ describe('toInt', () => {
 });
 
 describe('buildSearchQuery', () => {
-  const words = ['alpha', 'beta', 'gamma', 'delta', 'epsilon'];
-
-  it('produces 3-5 space-separated words in words mode', () => {
-    for (let i = 0; i < 100; i++) {
-      const q = buildSearchQuery(true, words);
-      const tokens = q.trim().split(/\s+/);
-      expect(tokens.length).toBeGreaterThanOrEqual(3);
-      expect(tokens.length).toBeLessThanOrEqual(5);
+  it('builds natural multi-word queries from real words, no random prefix', () => {
+    for (let i = 0; i < 300; i++) {
+      const q = buildSearchQuery();
+      // Real words separated by single spaces, starting with a letter/digit —
+      // never a lone random character or gibberish string.
+      expect(q).toMatch(/^[a-z0-9]+( [a-z0-9]+)+$/);
+      for (const token of q.split(' ')) {
+        expect(VOCAB.has(token)).toBe(true);
+      }
     }
   });
 
-  it('produces a single alphanumeric token in letters mode', () => {
-    for (let i = 0; i < 100; i++) {
-      const q = buildSearchQuery(false, words);
-      expect(q).toMatch(/^[a-z0-9]+$/);
-      expect(q).not.toContain(' ');
-    }
+  it('varies between calls', () => {
+    const seen = new Set<string>();
+    for (let i = 0; i < 100; i++) seen.add(buildSearchQuery());
+    expect(seen.size).toBeGreaterThan(20);
   });
 });
 
 describe('buildSearchUrl', () => {
-  it('wraps the query with the Bing search URL and params', () => {
-    expect(buildSearchUrl('xhello')).toBe(
-      'https://www.bing.com/search?q=xhello&qs=n&form=QBLH&sp=-1&pq='
+  it('url-encodes the query into the Bing search URL', () => {
+    expect(buildSearchUrl('best coffee')).toBe(
+      'https://www.bing.com/search?q=best%20coffee&qs=n&form=QBLH&sp=-1&pq='
     );
   });
 });
@@ -52,14 +56,14 @@ describe('nextDelayMinutes', () => {
     expect(nextDelayMinutes(0, 0)).toBe(0.1);
     expect(nextDelayMinutes(1, 0)).toBe(0.1);
   });
-  it('spreads the delay ±50% around the base and varies between calls', () => {
+  it('spreads the delay ±75% around the base and varies between calls', () => {
     const values = new Set<number>();
     for (let i = 0; i < 300; i++) {
       const v = nextDelayMinutes(60);
       values.add(v);
-      // base 60s → [30s, 90s] → [0.5, 1.5] minutes
-      expect(v).toBeGreaterThanOrEqual(0.5 - 1e-9);
-      expect(v).toBeLessThanOrEqual(1.5 + 1e-9);
+      // base 60s → [15s, 105s] → [0.25, 1.75] minutes
+      expect(v).toBeGreaterThanOrEqual(0.25 - 1e-9);
+      expect(v).toBeLessThanOrEqual(1.75 + 1e-9);
     }
     expect(values.size).toBeGreaterThan(50);
   });
