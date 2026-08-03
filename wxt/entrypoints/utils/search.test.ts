@@ -45,12 +45,23 @@ describe('buildSearchUrl', () => {
 });
 
 describe('nextDelayMinutes', () => {
-  it('computes (timeout-1)s in minutes with jitter', () => {
-    expect(nextDelayMinutes(60, 0)).toBeCloseTo(59000 / 60000, 5);
+  it('returns the base timeout in minutes when jitter is zero', () => {
+    expect(nextDelayMinutes(60, 0)).toBeCloseTo(1, 5);
   });
   it('floors at 0.1 for very small timeouts', () => {
     expect(nextDelayMinutes(0, 0)).toBe(0.1);
     expect(nextDelayMinutes(1, 0)).toBe(0.1);
+  });
+  it('spreads the delay ±50% around the base and varies between calls', () => {
+    const values = new Set<number>();
+    for (let i = 0; i < 300; i++) {
+      const v = nextDelayMinutes(60);
+      values.add(v);
+      // base 60s → [30s, 90s] → [0.5, 1.5] minutes
+      expect(v).toBeGreaterThanOrEqual(0.5 - 1e-9);
+      expect(v).toBeLessThanOrEqual(1.5 + 1e-9);
+    }
+    expect(values.size).toBeGreaterThan(50);
   });
 });
 

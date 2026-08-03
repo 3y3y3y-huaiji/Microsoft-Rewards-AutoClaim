@@ -30,9 +30,16 @@ export function buildSearchUrl(query: string): string {
 
 // Chrome/Firefox alarms accept minutes; floor at 0.1 so the value is never 0.
 // (Chrome still clamps sub-minute alarms in packed builds regardless.)
-export function nextDelayMinutes(timeoutSeconds: number, jitterMs: number = getRndInteger(0, 2000)): number {
-    const t = Math.max(timeoutSeconds, 1);
-    return Math.max(((t - 1) * 1000 + jitterMs) / 60000, 0.1);
+// Fraction of the configured gap used as a symmetric random spread, so the
+// time between searches varies widely (base ±50%) instead of being near-fixed —
+// looks less robotic. Averages the user's configured timeout.
+const DELAY_JITTER_FRACTION = 0.5;
+
+export function nextDelayMinutes(timeoutSeconds: number, jitterMs?: number): number {
+    const baseMs = Math.max(timeoutSeconds, 1) * 1000;
+    const spread = Math.round(baseMs * DELAY_JITTER_FRACTION);
+    const jitter = jitterMs ?? getRndInteger(-spread, spread);
+    return Math.max((baseMs + jitter) / 60000, 0.1);
 }
 
 // True while another search tab should open. Opening exactly `searches` tabs
