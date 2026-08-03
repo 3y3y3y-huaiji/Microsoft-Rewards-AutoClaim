@@ -2,10 +2,10 @@ import './App.css';
 import { useEffect, useState } from 'react';
 import { useStorage } from '@/entrypoints/hooks/useStorage';
 import { StorageValues } from '@/entrypoints/enums/storageValues';
-import { DEFAULTS } from '@/entrypoints/utils/settings';
+import { DEFAULTS, LEVEL_SEARCHES } from '@/entrypoints/utils/settings';
 import { setBadgeText } from '@/entrypoints/utils/browserAction';
 import NumberInput from '@/entrypoints/components/NumberInput';
-import SearchModeToggle from '@/entrypoints/components/SearchModeToggle';
+import AccountLevelSelect from '@/entrypoints/components/AccountLevelSelect';
 import ManualClaimButton from '@/entrypoints/components/ManualClaimButton';
 
 function App() {
@@ -14,10 +14,17 @@ function App() {
     const [searches, setSearches] = useStorage<number>('searches', DEFAULTS.searches, StorageValues.SYNC);
     const [timeout, setTimeoutValue] = useStorage<number>('timeout', DEFAULTS.timeout, StorageValues.SYNC);
     const [closeTime, setCloseTime] = useStorage<number>('closeTime', DEFAULTS.closeTime, StorageValues.SYNC);
-    const [useWords, setUseWords] = useStorage<boolean>('useWords', DEFAULTS.useWords, StorageValues.SYNC);
+    const [accountLevel, setAccountLevel] = useStorage<string>('accountLevel', DEFAULTS.accountLevel, StorageValues.SYNC);
     const [donateHover, setDonateHover] = useState(false);
 
     useEffect(() => { setBadgeText(''); }, []);
+
+    // Picking a level sets a sensible search count; the number field stays
+    // editable so the user can still override it.
+    function handleLevelChange(level: string): void {
+        setAccountLevel(level);
+        setSearches(LEVEL_SEARCHES[level] ?? DEFAULTS.searches);
+    }
 
     return (
         <>
@@ -42,7 +49,6 @@ function App() {
                         <span className="tooltip-icon info" data-tooltip="Opens bing rewards tab and completes daily tasks for extra points">ℹ</span>
                     </div>
                 </div>
-                <div className="subtext mb-md">*allow popups at rewards.bing to work</div>
 
                 <div className="left-align small-title">
                     <div className="ml-2">Extension for free games:</div>
@@ -70,21 +76,24 @@ function App() {
                 <div className="inputs">
                     <div className="width-100">
                         <div className="input-with-info">
+                            <AccountLevelSelect value={accountLevel} onChange={handleLevelChange} />
+                            <span className="tooltip-icon info" data-tooltip="Your Rewards level sets a default number of searches (Member 5, Silver 10, Gold 20)">ℹ</span>
+                        </div>
+                    </div>
+                    <div className="width-100">
+                        <div className="input-with-info">
                             <NumberInput id="searches" label="Number of searches" value={searches} min={1} max={999} onChange={setSearches} />
                             <span className="tooltip-icon info" data-tooltip="Number of random tabs to open in bing">ℹ</span>
                         </div>
                     </div>
                     <div>
                         <NumberInput id="timeout" label="Time between searches (s)" value={timeout} min={0} max={9999} onChange={setTimeoutValue} />
-                        <div className="subtext initial-text">*Set to 500 if your points are stuck</div>
                     </div>
                     <div>
                         <NumberInput id="closeTime" label="Time before closing tabs (s)" value={closeTime} min={0} max={300} onChange={setCloseTime} />
                     </div>
                 </div>
             </div>
-
-            <SearchModeToggle useWords={useWords} onChange={setUseWords} />
 
             <div className="container-fluid text-center mt-2">
                 <span>

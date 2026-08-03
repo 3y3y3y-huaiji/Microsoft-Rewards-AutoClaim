@@ -1,9 +1,9 @@
 body {
     width: 20em;
-    height: 13em;
+    min-height: 13em;
     font-size: 18px;
     background-color: #e6f5f1;
-
+    padding-bottom: 0.6em;
 }
 
 .container-fluid {
@@ -175,12 +175,29 @@ a:not(.normal-link):hover::before {
 .inputs {
   display: flex;
   flex-direction: column;
-  gap: 0.4em;
+  gap: 0.5em;
   align-items: flex-start;
   margin-left: 2em;
-  input {
+  margin-top: 0.5em;
+  input, select {
     width: 5em;
   }
+}
+
+select {
+  font-family: inherit;
+  font-size: 0.8em;
+  padding: 0.2em 0.3em;
+  color: #18272F;
+  background-color: #fff;
+  border: 1px solid #2282ad;
+  border-radius: 0.25rem;
+}
+
+select:focus {
+  outline: 0;
+  border-color: #1a6f8c;
+  box-shadow: 0 0 0 0.15rem rgba(34, 130, 173, 0.25);
 }
 
 .search ul {
@@ -272,10 +289,10 @@ a:not(.normal-link):hover::before {
 .checkboxes {
   display: flex;
   flex-direction: column;
-  margin-left: 3em;
+  margin-left: 2em;
   text-align: initial;
-  margin-top: 0.5em;
-  gap: 0.3em;
+  margin-top: 0.6em;
+  gap: 0.4em;
 }
 .input-with-info {
   display: flex;
@@ -397,6 +414,8 @@ a:not(.normal-link):hover::before {
 .website-header {
   display: flex;
   justify-content: space-evenly;
+  align-items: center;
+  margin: 0.5em 0;
 }
 
 .qr-code-with-text {
@@ -413,7 +432,7 @@ a:not(.normal-link):hover::before {
 }
 
 .website-phone-image, .qr-code {
-  height: 8rem;
+  height: 6rem;
 }
 
 .small-title {
