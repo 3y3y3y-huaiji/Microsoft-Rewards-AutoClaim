@@ -4,7 +4,7 @@ export const DEFAULTS = {
     active: true,
     autoDaily: true,
     timeout: 60,
-    searches: 3,
+    searches: 5,
     closeTime: 5,
     useWords: true,
 } as const;
