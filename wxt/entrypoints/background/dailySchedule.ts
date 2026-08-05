@@ -46,6 +46,7 @@ export async function handleInstallOrUpdate(details: { reason: string }): Promis
             timeout: DEFAULTS.timeout,
             searches: DEFAULTS.searches,
             closeTime: DEFAULTS.closeTime,
+            openFirstResult: DEFAULTS.openFirstResult,
             isSearching: false,
         }, StorageValues.SYNC);
         await browser.runtime.setUninstallURL(

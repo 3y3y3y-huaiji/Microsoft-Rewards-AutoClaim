@@ -1,7 +1,7 @@
 import { browser } from 'wxt/browser';
 import { getRndInteger } from '@/entrypoints/utils/helpers';
 import { buildSearchQuery, buildSearchUrl, nextDelayMinutes, shouldOpenMore, toInt } from '@/entrypoints/utils/search';
-import { getStorageItems, setStorageItem, setStorageItems } from '@/entrypoints/hooks/useStorage';
+import { getStorageItem, getStorageItems, setStorageItem, setStorageItems } from '@/entrypoints/hooks/useStorage';
 import { StorageValues } from '@/entrypoints/enums/storageValues';
 import { DEFAULTS } from '@/entrypoints/utils/settings';
 
@@ -49,8 +49,15 @@ export async function stopSearches(): Promise<void> {
     await browser.alarms.clearAll();
 }
 
+// The marAuto marker tells the bing-result content script this tab was opened
+// by the extension, so it may open the first organic result. It's only added
+// when the user enabled "Open first result in search tabs"; manual Bing
+// searches (and tabs opened with the option off) lack the marker and are left
+// untouched.
 async function openSearchTab(closeTimeMs: number): Promise<void> {
-    const url = buildSearchUrl(buildSearchQuery());
+    const openFirstResult = await getStorageItem<boolean>('openFirstResult', StorageValues.SYNC);
+    const query = buildSearchUrl(buildSearchQuery());
+    const url = openFirstResult ? `${query}&marAuto=1` : query;
     await openAndClose(url, closeTimeMs + getRndInteger(0, 1000));
 }
 

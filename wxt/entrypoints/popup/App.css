@@ -3,7 +3,7 @@ body {
     min-height: 13em;
     font-size: 18px;
     background-color: #e6f5f1;
-    padding-bottom: 0.6em;
+    padding-bottom: 0;
 }
 
 .container-fluid {
@@ -165,6 +165,10 @@ a:not(.normal-link)::before {
 }
 #donateImg {
   visibility: hidden;
+  /* Overrides the 20px footer-image cap so the cat is a bit larger when the
+     Donate link reveals it on hover. */
+  height: 28px;
+  width: auto;
 }
 
 a:not(.normal-link):hover::before {
@@ -198,6 +202,59 @@ select:focus {
   outline: 0;
   border-color: #1a6f8c;
   box-shadow: 0 0 0 0.15rem rgba(34, 130, 173, 0.25);
+}
+
+/* Number inputs match the select's look for a consistent form. */
+input[type="number"] {
+  font-family: inherit;
+  font-size: 0.8em;
+  padding: 0.2em 0.4em;
+  color: #18272F;
+  background-color: #fff;
+  border: 1px solid #2282ad;
+  border-radius: 0.25rem;
+}
+
+input[type="number"]:focus {
+  outline: 0;
+  border-color: #1a6f8c;
+  box-shadow: 0 0 0 0.15rem rgba(34, 130, 173, 0.25);
+}
+
+/* A form row: the control and its label, with breathing room between them. */
+.field {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6em;
+}
+
+/* Equal box width so every label starts at the same x — the select and the
+   number inputs line up as a column despite differing padding. */
+.field input,
+.field select {
+  box-sizing: border-box;
+  width: 5em;
+}
+
+.field label {
+  font-size: 0.85em;
+  line-height: 1.2;
+}
+
+/* Quieter, self-contained link for the "account level" label — deliberately
+   different from the sliding-highlight top/bottom links. */
+.level-link {
+  color: #2282ad;
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-underline-offset: 2px;
+  transition: color 0.15s ease-in-out;
+}
+
+.level-link:hover {
+  color: #1a6f8c;
+  text-decoration-style: solid;
 }
 
 .search ul {
@@ -374,26 +431,38 @@ select:focus {
 }
 
 .earn-list {
-  margin-top: 0.2em;
+  /* Left inset matches the section title's .ml-2 indent so the card lines up
+     under the text; right inset keeps it off the popup edge. */
+  margin: 0.4em 1.5em 0;
+  padding: 0;
+  list-style: none;
 }
 
-.earn-list > li a{
+.earn-list > li a {
     color: #18272F;
+    transition: color 0.15s ease-in-out;
 }
 
 .earn-list > li {
-    padding: 0.65em;
+    padding: 0.6em 0.7em;
     font-weight: 600;
     display: flex;
-    align-content: center;
+    align-items: center;
     gap: 0.2em;
     font-size: 14px;
+    border: 1px solid #2282ad;
+    border-radius: 0.35rem;
+    background-color: #fff;
+    transition: background-color 0.15s ease-in-out;
 }
 
 .earn-list > li:hover {
     cursor: pointer;
-    color: white;
     background-color: #2282ad;
+}
+
+.earn-list > li:hover a {
+    color: #fff;
 }
 
 .earn-logo {
@@ -435,8 +504,23 @@ select:focus {
   height: 6rem;
 }
 
+/* Footer row sits flush at the bottom; its images are capped so they don't
+   inflate the row height (that oversized box was the "big padding" below). */
+.footer-links {
+  margin-top: 0.6em;
+  padding-top: 0.4em;
+  padding-bottom: 0.4em;
+}
+
+.footer-links img {
+  height: 20px;
+  width: auto;
+}
+
 .small-title {
-    font-size: 1.1em;
-    font-weight: 500;
-    margin-bottom: 0.3em;
+    font-size: 1.05em;
+    font-weight: 600;
+    color: #18272F;
+    margin-top: 0.7em;
+    margin-bottom: 0.35em;
 }

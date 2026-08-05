@@ -7,6 +7,9 @@ export const DEFAULTS = {
     timeout: 60,
     searches: 5,
     closeTime: 5,
+    // When on, each search tab opens its first organic result after a short
+    // random delay (without stealing focus); otherwise the tab just loads the SERP.
+    openFirstResult: true,
 } as const;
 
 // Selecting an account level sets a sensible default number of daily searches

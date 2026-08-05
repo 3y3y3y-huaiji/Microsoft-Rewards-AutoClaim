@@ -13,14 +13,14 @@ const LEVELS: { value: string; label: string }[] = [
 // they're on. Picking a level sets a sensible default search count.
 function AccountLevelSelect({ value, onChange }: AccountLevelSelectProps) {
     return (
-        <span>
+        <span className="field">
             <select id="accountLevel" value={value} onChange={(e) => onChange(e.target.value)}>
                 {LEVELS.map((level) => (
                     <option key={level.value} value={level.value}>{level.label}</option>
                 ))}
             </select>
             <label htmlFor="accountLevel">
-                <a href="https://rewards.bing.com/about?section=benefits" target="_blank" rel="noopener noreferrer">account level</a>
+                <a className="normal-link level-link" href="https://rewards.bing.com/about?section=benefits" target="_blank" rel="noopener noreferrer">account level</a>
             </label>
         </span>
     );

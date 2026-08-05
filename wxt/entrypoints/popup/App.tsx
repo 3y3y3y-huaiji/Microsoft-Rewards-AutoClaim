@@ -15,6 +15,7 @@ function App() {
     const [timeout, setTimeoutValue] = useStorage<number>('timeout', DEFAULTS.timeout, StorageValues.SYNC);
     const [closeTime, setCloseTime] = useStorage<number>('closeTime', DEFAULTS.closeTime, StorageValues.SYNC);
     const [accountLevel, setAccountLevel] = useStorage<string>('accountLevel', DEFAULTS.accountLevel, StorageValues.SYNC);
+    const [openFirstResult, setOpenFirstResult] = useStorage<boolean>('openFirstResult', DEFAULTS.openFirstResult, StorageValues.SYNC);
     const [donateHover, setDonateHover] = useState(false);
 
     useEffect(() => { setBadgeText(''); }, []);
@@ -40,13 +41,18 @@ function App() {
                 <div className="checkboxes">
                     <div className="input-with-info">
                         <input className="form-check-input" type="checkbox" id="autoCheckbox" checked={active} onChange={(e) => setActive(e.target.checked)} />
-                        <label htmlFor="autoCheckbox">Do daily searches automatically</label>
+                        <label htmlFor="autoCheckbox">Daily searches</label>
                         <span className="tooltip-icon info" data-tooltip="Opens bing tabs the first time browser opens every day">ℹ</span>
                     </div>
                     <div className="input-with-info">
                         <input className="form-check-input" type="checkbox" id="autoDaily" checked={autoDaily} onChange={(e) => setAutoDaily(e.target.checked)} />
-                        <label htmlFor="autoDaily">Open daily set automatically</label>
+                        <label htmlFor="autoDaily">Daily set</label>
                         <span className="tooltip-icon info" data-tooltip="Opens bing rewards tab and completes daily tasks for extra points">ℹ</span>
+                    </div>
+                    <div className="input-with-info">
+                        <input className="form-check-input" type="checkbox" id="openFirstResult" checked={openFirstResult} onChange={(e) => setOpenFirstResult(e.target.checked)} />
+                        <label htmlFor="openFirstResult">Open first result in search tabs</label>
+                        <span className="tooltip-icon info" data-tooltip="In each opened search tab, navigate to the first result after a short random delay">ℹ</span>
                     </div>
                 </div>
 
@@ -95,7 +101,7 @@ function App() {
                 </div>
             </div>
 
-            <div className="container-fluid text-center mt-2">
+            <div className="container-fluid text-center footer-links">
                 <span>
                     <a href="https://github.com/spin311/MicrosoftRewardsWebsite" className="float-start links" target="_blank">Github</a>
                     <img src="/imgs/github.png" alt="github-logo" />
