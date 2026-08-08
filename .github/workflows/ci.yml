@@ -7,21 +7,24 @@ on:
     branches: [master]
 
 jobs:
-  extensions:
-    name: Extensions — typecheck + build
+  extension:
+    name: Extension — typecheck + test + build
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: wxt
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 22
       - run: npm ci
-      - run: npm run typecheck
+      - run: npm run compile
+      - run: npm run test
+      # Both targets are built: the Chrome (MV3) and Firefox outputs differ
+      # enough that one passing does not imply the other does.
       - run: npm run build
-      # Guards against the src↔prod/dist drift that previously went unnoticed:
-      # a committed build must match a fresh build from source.
-      - name: Verify prod/dist matches source build
-        run: git diff --exit-code -- chrome/prod/dist firefox/prod/dist
+      - run: npm run build:firefox
 
   mobile:
     name: Flutter — analyze + test
