@@ -1,12 +1,14 @@
 import './App.css';
 import { useEffect, useState } from 'react';
 import { useStorage } from '@/entrypoints/hooks/useStorage';
+import { useSearchProgress } from '@/entrypoints/hooks/useSearchProgress';
 import { StorageValues } from '@/entrypoints/enums/storageValues';
 import { DEFAULTS, LEVEL_SEARCHES } from '@/entrypoints/utils/settings';
-import { setBadgeText } from '@/entrypoints/utils/browserAction';
+import { clearBadge } from '@/entrypoints/utils/browserAction';
 import NumberInput from '@/entrypoints/components/NumberInput';
 import AccountLevelSelect from '@/entrypoints/components/AccountLevelSelect';
 import ManualClaimButton from '@/entrypoints/components/ManualClaimButton';
+import SearchProgressBar from '@/entrypoints/components/SearchProgressBar';
 
 function App() {
     const [active, setActive] = useStorage<boolean>('active', DEFAULTS.active, StorageValues.SYNC);
@@ -17,8 +19,18 @@ function App() {
     const [accountLevel, setAccountLevel] = useStorage<string>('accountLevel', DEFAULTS.accountLevel, StorageValues.SYNC);
     const [openFirstResult, setOpenFirstResult] = useStorage<boolean>('openFirstResult', DEFAULTS.openFirstResult, StorageValues.SYNC);
     const [donateHover, setDonateHover] = useState(false);
+    const { isLoaded, isSearching, completed, total } = useSearchProgress();
 
-    useEffect(() => { setBadgeText(''); }, []);
+    // The "New" badge from an update is dismissed once the popup is opened — but
+    // the badge doubles as the live search counter, so wait for the run state and
+    // leave a running count alone.
+    useEffect(() => {
+        if (isLoaded && !isSearching) clearBadge();
+    }, [isLoaded, isSearching]);
+
+    // Only shown for a run that is in flight or already finished this session:
+    // a zero count means nothing has run, and showing 0/5 would read as stalled.
+    const hasRunToShow = isLoaded && (isSearching || completed > 0);
 
     // Picking a level sets a sensible search count; the number field stays
     // editable so the user can still override it.
@@ -29,7 +41,7 @@ function App() {
 
     return (
         <>
-            <h3 className="container-fluid text-center mt-2 heading">Microsoft automatic rewards</h3>
+            <h3 className="container-fluid text-center mt-2 heading">Search automatic rewards</h3>
             <div className="container-fluid text-center my-2">
                 <a href="https://svitspindler.com/microsoft-automatic-rewards" className="float-start links" target="_blank">Help</a>
                 <a href="https://svitspindler.com/microsoft-automatic-rewards/mobile/test-app" className="float-start links" target="_blank">Mobile</a>
@@ -37,7 +49,10 @@ function App() {
             </div>
 
             <div className="text-center">
-                <ManualClaimButton />
+                <ManualClaimButton isSearching={isSearching} />
+                {hasRunToShow && (
+                    <SearchProgressBar completed={completed} total={total} isSearching={isSearching} />
+                )}
                 <div className="checkboxes">
                     <div className="input-with-info">
                         <input className="form-check-input" type="checkbox" id="autoCheckbox" checked={active} onChange={(e) => setActive(e.target.checked)} />

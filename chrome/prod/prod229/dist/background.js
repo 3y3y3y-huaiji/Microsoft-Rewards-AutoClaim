@@ -1,5 +1,5 @@
+"use strict";
 // background.ts (Chrome MV3 service worker)
-
 // Constants
 const WEBSITE_URL = "https://svitspindler.com/microsoft-automatic-rewards";
 const BING_SEARCH_URL = "https://www.bing.com/search?q=";
@@ -7,8 +7,7 @@ const BING_SEARCH_PARAMS = "&qs=n&form=QBLH&sp=-1&pq=";
 const DEFAULT_SEARCHES = 12;
 const DEFAULT_TIMEOUT = 60;
 const DEFAULT_CLOSE_TIME = 5;
-
-const words: string[] = [
+const words = [
     "food", "drink", "restaurant", "cafe", "bar", "pub", "club", "diner", "eatery", "tavern",
     "museum", "bistro", "buffet", "canteen", "coffeehouse", "grill", "inn", "joint", "kitchen",
     "lounge", "pizzeria", "saloon", "steakhouse", "tearoom", "trattoria", "brasserie", "brewery",
@@ -46,19 +45,12 @@ const words: string[] = [
     "explained", "definition", "meaning", "origin", "background", "history of", "basics of",
     "beginner guide", "example of", "sample", "template", "walkthrough", "demo"
 ];
-
-interface RuntimeMessage {
-    action: string;
-}
-
 // Event Listeners
 chrome.runtime.onInstalled.addListener(handleInstallOrUpdate);
 chrome.runtime.onStartup.addListener(handleStartup);
 chrome.runtime.onMessage.addListener(handleMessage);
-
 chrome.alarms.onAlarm.addListener(handleAlarms);
-
-function handleAlarms(alarm: chrome.alarms.Alarm): void {
+function handleAlarms(alarm) {
     if (alarm.name === 'openTabAlarm') {
         chrome.storage.sync.get(["searches", "timeout", "closeTime", "useWords", 'currentSearch'], (results) => {
             let searchTimeout = parseInt(results.timeout) ?? DEFAULT_TIMEOUT;
@@ -69,21 +61,20 @@ function handleAlarms(alarm: chrome.alarms.Alarm): void {
             openTab(useWords, closeTime);
             currentSearch++;
             if (currentSearch < searches) {
-                if (searchTimeout <= 1) searchTimeout = 1;
+                if (searchTimeout <= 1)
+                    searchTimeout = 1;
                 const delayInMinutes = ((searchTimeout - 1) * 1000 + getRandomNumber(0, 2000)) / 60000;
                 chrome.storage.sync.set({ currentSearch });
                 chrome.alarms.create('openTabAlarm', { delayInMinutes });
-
-            } else {
+            }
+            else {
                 sendStopSearch();
             }
         });
     }
-
 }
-
 // Event Handlers
-function handleInstallOrUpdate(details: chrome.runtime.InstalledDetails): void {
+function handleInstallOrUpdate(details) {
     if (details.reason === "install") {
         chrome.storage.sync.set({
             active: true,
@@ -98,12 +89,12 @@ function handleInstallOrUpdate(details: chrome.runtime.InstalledDetails): void {
         setTimeout(() => {
             chrome.tabs.create({ url: WEBSITE_URL, active: true });
         }, 1000);
-    }  else if (details.reason === "update") {
-        chrome.action.setBadgeText({text: "New"});
+    }
+    else if (details.reason === "update") {
+        chrome.action.setBadgeText({ text: "New" });
     }
 }
-
-function handleStartup(): void {
+function handleStartup() {
     chrome.storage.sync.get(["active", "autoDaily"], (result) => {
         if (result.active || result.autoDaily) {
             checkLastOpened();
@@ -111,39 +102,36 @@ function handleStartup(): void {
     });
     chrome.storage.sync.set({ isSearching: false });
 }
-
-function handleMessage(request: RuntimeMessage): void {
+function handleMessage(request) {
     if (request.action === "popup") {
         popupBg(true);
-    } else if (request.action === "check") {
+    }
+    else if (request.action === "check") {
         checkLastOpened();
-    } else if (request.action === "stop") {
+    }
+    else if (request.action === "stop") {
         sendStopSearch();
     }
 }
-
-async function openDailyRewards(): Promise<void> {
-    const tab = await chrome.tabs.create({ url: "https://rewards.bing.com/dashboard", active: false });
-
+async function openDailyRewards() {
+    const tab = await chrome.tabs.create({ url: "https://rewards.bing.com/", active: false });
     // Wait for the tab to load completely before sending message
-    await new Promise<void>((resolve) => {
-        function checkTab(tabId: number, changeInfo: chrome.tabs.TabChangeInfo): void {
+    await new Promise((resolve) => {
+        function checkTab(tabId, changeInfo) {
             if (tabId === tab.id && changeInfo.status === "complete") {
                 chrome.tabs.onUpdated.removeListener(checkTab);
                 setTimeout(() => {
-                    chrome.tabs.sendMessage(tab.id!, { action: "openDaily" });
+                    chrome.tabs.sendMessage(tab.id, { action: "openDaily" });
                     resolve();
                 }, 300);
             }
         }
         chrome.tabs.onUpdated.addListener(checkTab);
     });
-
-    setTimeout(() => chrome.tabs.remove(tab.id!), 10000);
+    setTimeout(() => chrome.tabs.remove(tab.id), 10000);
 }
-
 // Main Functions
-function popupBg(manualCall = false): void {
+function popupBg(manualCall = false) {
     chrome.storage.sync.get(["searches", "timeout", "closeTime", "useWords", "autoDaily", "active"], (results) => {
         const searchTimeout = results.timeout != null ? parseInt(results.timeout) : DEFAULT_TIMEOUT;
         const searches = results.searches != null ? parseInt(results.searches) : DEFAULT_SEARCHES;
@@ -151,33 +139,32 @@ function popupBg(manualCall = false): void {
         const useWords = results.useWords ?? true;
         const autoDaily = results.autoDaily ?? true;
         const autoTabs = results.active ?? true;
-        if (autoDaily) openDailyRewards();
-        if ((manualCall || autoTabs) && searches > 0) createTabs(searchTimeout, searches, closeTime, useWords);
+        if (autoDaily)
+            openDailyRewards();
+        if ((manualCall || autoTabs) && searches > 0)
+            createTabs(searchTimeout, searches, closeTime, useWords);
     });
 }
-
-function getRandomNumber(min: number, max: number): number {
+function getRandomNumber(min, max) {
     return Math.floor(Math.random() * (max - min + 1) + min);
 }
-
-function getRandomElement<T>(array: T[]): T {
+function getRandomElement(array) {
     return array[getRandomNumber(0, array.length - 1)];
 }
-
-function sendStopSearch(): void {
-    chrome.storage.sync.set({isSearching: false});
-    chrome.runtime.sendMessage({action: "searchEnded"});
+function sendStopSearch() {
+    chrome.storage.sync.set({ isSearching: false });
+    chrome.runtime.sendMessage({ action: "searchEnded" });
     chrome.alarms.clearAll();
 }
-
-async function openTab(useWords: boolean, closeTime: number): Promise<void> {
+async function openTab(useWords, closeTime) {
     let randomString = '';
     if (useWords) {
-        const numberOfWords = getRandomNumber(3, 5);
+        const numberOfWords = getRandomNumber(2, 4);
         for (let i = 0; i < numberOfWords; i++) {
             randomString += `${getRandomElement(words)} `;
         }
-    } else {
+    }
+    else {
         randomString = Math.random().toString(36).substring(2, getRandomNumber(5, 8));
     }
     const randomChar = Math.random().toString(36).substring(2, 3);
@@ -185,19 +172,18 @@ async function openTab(useWords: boolean, closeTime: number): Promise<void> {
     const url = `${BING_SEARCH_URL}${randomString}${BING_SEARCH_PARAMS}`;
     openAndClose(url, closeTime + getRandomNumber(0, 1000));
 }
-
-async function createTabs(searchTimeout: number, searches: number, closeTime: number, useWords = true): Promise<void> {
+async function createTabs(searchTimeout, searches, closeTime, useWords = true) {
     await chrome.storage.sync.set({ isSearching: true, currentSearch: 0 });
-    if (searchTimeout <= 1) searchTimeout = 1;
+    if (searchTimeout <= 1)
+        searchTimeout = 1;
     await openTab(useWords, closeTime * 1000);
-    const timeToWait =  (searchTimeout - 1) * 1000 + getRandomNumber(0, 2000);
+    const timeToWait = (searchTimeout - 1) * 1000 + getRandomNumber(0, 2000);
     chrome.alarms.create('openTabAlarm', { delayInMinutes: timeToWait / 60000 });
 }
-
-function openAndClose(url: string, closeTime: number): void {
+function openAndClose(url, closeTime) {
     chrome.tabs.create({ url, active: false }, (tab) => {
-        const idCurr = tab.id!;
-        chrome.tabs.onUpdated.addListener(function listener(tabId: number, changeInfo: chrome.tabs.TabChangeInfo) {
+        const idCurr = tab.id;
+        chrome.tabs.onUpdated.addListener(function listener(tabId, changeInfo) {
             if (tabId === idCurr && changeInfo.status === "complete") {
                 chrome.tabs.onUpdated.removeListener(listener);
                 waitAndClose(idCurr, closeTime);
@@ -205,8 +191,7 @@ function openAndClose(url: string, closeTime: number): void {
         });
     });
 }
-
-function checkLastOpened(): void {
+function checkLastOpened() {
     const today = new Date().toLocaleDateString();
     chrome.storage.sync.get("lastOpened", (result) => {
         if (result.lastOpened !== today) {
@@ -215,14 +200,14 @@ function checkLastOpened(): void {
         }
     });
 }
-
-function waitAndClose(id: number, timeout = DEFAULT_CLOSE_TIME * 1000): void {
-    if (timeout <= 0) timeout = 500;
+function waitAndClose(id, timeout = DEFAULT_CLOSE_TIME * 1000) {
+    if (timeout <= 0)
+        timeout = 500;
     setTimeout(() => {
         chrome.tabs.get(id, () => {
             if (!chrome.runtime.lastError) {
                 chrome.tabs.remove(id);
             }
         });
-    }, (timeout - 500)  + getRandomNumber(0, 1000));
+    }, (timeout - 500) + getRandomNumber(0, 1000));
 }

@@ -2,43 +2,41 @@
 
 chrome.runtime.onMessage.addListener(handleContentMessage);
 
-const targetSelector = '#daily-sets > mee-card-group:nth-child(7) > div';
+function waitForBingSearchAnchors(): Promise<HTMLAnchorElement[]> {
+    function resolveAnchors(observer: MutationObserver, resolve: (value: (PromiseLike<HTMLAnchorElement[]> | HTMLAnchorElement[])) => void) {
+        const anchors = [...document.querySelectorAll<HTMLAnchorElement>("div.grid > a")]
+            .filter((anchor) => anchor.href.includes("www.bing.com/search?q="));
 
-async function waitForElement(selector: string): Promise<Element> {
-
-    return new Promise<Element>((resolve) => {
-        const observer = new MutationObserver(() => {
-            const target = document.querySelector(selector);
-            if (target) {
-                observer.disconnect();
-                resolve(target);
-            }
-        });
-        observer.observe(document.body!, { childList: true, subtree: true });
-        const target = document.querySelector(selector);
-        if (target) {
+        if (anchors.length > 0) {
             observer.disconnect();
-            resolve(target);
+            resolve(anchors);
         }
+    }
+
+    return new Promise<HTMLAnchorElement[]>((resolve) => {
+        const observer = new MutationObserver(() => {
+            resolveAnchors(observer, resolve);
+        });
+
+        observer.observe(document.body!, { childList: true, subtree: true });
+
+        resolveAnchors(observer, resolve);
     });
 }
 
 function handleContentMessage(request: { action: string }): void {
-        if (request.action === "openDaily") {
-            openDailySets();
-        }
+    if (request.action === "openDaily") {
+        void openDailySets();
+    }
 }
 
+async function openDailySets(): Promise<void> {
+    const targetLinks = await waitForBingSearchAnchors();
 
-function openDailySets(): void {
-    waitForElement(targetSelector).then(async (targetNode) => {
-        if (!targetNode) return;
-        const targetLinks = targetNode.getElementsByClassName("ds-card-sec ng-scope") as HTMLCollectionOf<HTMLElement>;
-        for (const link of targetLinks) {
-            link.click();
-            await contentDelay(1000 + contentGetRandomNumber(0, 1000));
-        }
-    });
+    for (const link of targetLinks) {
+        link.click();
+        await contentDelay(1000 + contentGetRandomNumber(0, 1000));
+    }
 }
 
 async function contentDelay(ms: number): Promise<void> {

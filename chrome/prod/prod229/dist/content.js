@@ -1,8 +1,8 @@
 "use strict";
-// content.ts (Firefox WebExtension)
-browser.runtime.onMessage.addListener(handleContentMessage);
+// content.ts (Chrome content script, injected on rewards.bing.com)
+chrome.runtime.onMessage.addListener(handleContentMessage);
 const targetSelector = '#daily-sets > mee-card-group:nth-child(7) > div';
-function waitForElement(selector) {
+async function waitForElement(selector) {
     return new Promise((resolve) => {
         const observer = new MutationObserver(() => {
             const target = document.querySelector(selector);
@@ -20,25 +20,22 @@ function waitForElement(selector) {
     });
 }
 function handleContentMessage(request) {
-    if (request.action === 'openDaily') {
-        void openDailySets();
+    if (request.action === "openDaily") {
+        openDailySets();
     }
 }
-async function openDailySets() {
-    const targetNode = await waitForElement(targetSelector);
-    if (!targetNode)
-        return;
-    const hrefs6 = [...document.querySelectorAll("div.grid.gap-3 > a")]
-        .filter((anchor) => anchor.href.includes("www.bing.com/search?q="));
-    const targetLinks = hrefs6.length > 0
-        ? hrefs6
-        : Array.from(targetNode.getElementsByClassName('ds-card-sec ng-scope'));
-    for (const link of targetLinks) {
-        link.click();
-        await contentDelay(1000 + contentGetRandomNumber(0, 1000));
-    }
+function openDailySets() {
+    waitForElement(targetSelector).then(async (targetNode) => {
+        if (!targetNode)
+            return;
+        const targetLinks = targetNode.getElementsByClassName("ds-card-sec ng-scope");
+        for (const link of targetLinks) {
+            link.click();
+            await contentDelay(1000 + contentGetRandomNumber(0, 1000));
+        }
+    });
 }
-function contentDelay(ms) {
+async function contentDelay(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 function contentGetRandomNumber(min, max) {

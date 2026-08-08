@@ -114,7 +114,7 @@ function handleMessage(request) {
     }
 }
 async function openDailyRewards() {
-    const tab = await chrome.tabs.create({ url: "https://rewards.bing.com/", active: false });
+    const tab = await chrome.tabs.create({ url: "https://rewards.bing.com/dashboard", active: false });
     // Wait for the tab to load completely before sending message
     await new Promise((resolve) => {
         function checkTab(tabId, changeInfo) {
@@ -159,7 +159,7 @@ function sendStopSearch() {
 async function openTab(useWords, closeTime) {
     let randomString = '';
     if (useWords) {
-        const numberOfWords = getRandomNumber(2, 4);
+        const numberOfWords = getRandomNumber(3, 5);
         for (let i = 0; i < numberOfWords; i++) {
             randomString += `${getRandomElement(words)} `;
         }

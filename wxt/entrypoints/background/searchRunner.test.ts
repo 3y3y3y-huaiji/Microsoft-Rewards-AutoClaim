@@ -1,0 +1,106 @@
+// @vitest-environment node
+// Background search runner needs no DOM; node avoids the esbuild/jsdom clash
+// that WXT's `#imports` transform triggers (same reason as useStorage.test.ts).
+import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { fakeBrowser } from 'wxt/testing';
+import { handleAlarmStep, startSearches, stopSearches } from './searchRunner';
+import { getStorageItem, setStorageItems } from '@/entrypoints/hooks/useStorage';
+import { StorageValues } from '@/entrypoints/enums/storageValues';
+
+const ALARM = { name: 'openTabAlarm' };
+
+async function seed(values: Record<string, unknown>): Promise<void> {
+  await setStorageItems(
+    { active: true, searches: 5, timeout: 60, closeTime: 5, openFirstResult: false, ...values },
+    StorageValues.SYNC
+  );
+}
+
+describe('searchRunner', () => {
+  beforeEach(() => {
+    fakeBrowser.reset();
+    vi.restoreAllMocks();
+  });
+
+  describe('startSearches', () => {
+    it('opens the first tab and records progress as 1', async () => {
+      const create = vi.spyOn(fakeBrowser.tabs, 'create');
+      await seed({});
+
+      await startSearches(60, 5, 5);
+
+      expect(create).toHaveBeenCalledTimes(1);
+      expect(await getStorageItem<number>('currentSearch', StorageValues.SYNC)).toBe(1);
+      expect(await getStorageItem<boolean>('isSearching', StorageValues.SYNC)).toBe(true);
+    });
+  });
+
+  describe('handleAlarmStep', () => {
+    it('ignores alarms it does not own', async () => {
+      const create = vi.spyOn(fakeBrowser.tabs, 'create');
+      await seed({ currentSearch: 1 });
+
+      await handleAlarmStep({ name: 'someOtherAlarm' });
+
+      expect(create).not.toHaveBeenCalled();
+    });
+
+    it('opens the next tab and advances the recorded progress', async () => {
+      const create = vi.spyOn(fakeBrowser.tabs, 'create');
+      await seed({ currentSearch: 1, isSearching: true });
+
+      await handleAlarmStep(ALARM);
+
+      expect(create).toHaveBeenCalledTimes(1);
+      expect(await getStorageItem<number>('currentSearch', StorageValues.SYNC)).toBe(2);
+      expect(await getStorageItem<boolean>('isSearching', StorageValues.SYNC)).toBe(true);
+    });
+
+    it('records the final search before ending the run', async () => {
+      // Regression: the last step used to end the run without storing the count,
+      // so the popup froze at 4/5 even though 5 searches had run.
+      await seed({ currentSearch: 4, isSearching: true });
+
+      await handleAlarmStep(ALARM);
+
+      expect(await getStorageItem<number>('currentSearch', StorageValues.SYNC)).toBe(5);
+      expect(await getStorageItem<boolean>('isSearching', StorageValues.SYNC)).toBe(false);
+    });
+
+    it('opens no more tabs once every search has run', async () => {
+      const create = vi.spyOn(fakeBrowser.tabs, 'create');
+      await seed({ currentSearch: 5, isSearching: true });
+
+      await handleAlarmStep(ALARM);
+
+      expect(create).not.toHaveBeenCalled();
+      expect(await getStorageItem<boolean>('isSearching', StorageValues.SYNC)).toBe(false);
+    });
+
+    it('stops instead of searching when "Daily searches" is turned off', async () => {
+      // Regression: an alarm scheduled while the toggle was on kept opening Bing
+      // tabs after the user unchecked it (alarms survive a browser restart), so
+      // a daily-set-only setup still made searches.
+      const create = vi.spyOn(fakeBrowser.tabs, 'create');
+      await seed({ active: false, currentSearch: 1, isSearching: true });
+
+      await handleAlarmStep(ALARM);
+
+      expect(create).not.toHaveBeenCalled();
+      expect(await getStorageItem<boolean>('isSearching', StorageValues.SYNC)).toBe(false);
+      expect(await fakeBrowser.alarms.getAll()).toEqual([]);
+    });
+  });
+
+  describe('stopSearches', () => {
+    it('clears the running flag and any pending alarm', async () => {
+      await seed({ isSearching: true });
+      fakeBrowser.alarms.create('openTabAlarm', { delayInMinutes: 1 });
+
+      await stopSearches();
+
+      expect(await getStorageItem<boolean>('isSearching', StorageValues.SYNC)).toBe(false);
+      expect(await fakeBrowser.alarms.getAll()).toEqual([]);
+    });
+  });
+});

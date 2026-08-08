@@ -4,6 +4,7 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:microsoft_automatic_rewards/features/search/presentation/pages/search_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../core/di/injection_container.dart';
+import '../../domain/login_status.dart';
 import '../bloc/search_bloc.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -95,7 +96,7 @@ class _LoginScreenState extends State<LoginScreen> {
               Expanded(
                 child: InAppWebView(
                   initialUrlRequest: URLRequest(
-                    url: WebUri("https://login.live.com/login.srf?wa=wsignin1.0&id=264960&wreply=https%3A%2F%2Fwww.bing.com%2Fsecure%2FPassport.aspx&wp=MBI_SSL"),
+                    url: WebUri(bingSignInUrl),
                   ),
                   initialSettings: InAppWebViewSettings(
                     javaScriptEnabled: true,
@@ -108,7 +109,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     _webViewController = controller;
                   },
                   onLoadStop: (controller, url) async {
-                    if (url != null && url.host.contains("www.bing.com")) {
+                    if (isSignedInBingUrl(url)) {
                       final prefs = await SharedPreferences.getInstance();
                       await prefs.setBool("loggedIn", true);
                       navigateToSearchScreen(context);

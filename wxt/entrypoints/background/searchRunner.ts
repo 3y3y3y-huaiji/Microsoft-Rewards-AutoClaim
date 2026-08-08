@@ -1,19 +1,18 @@
 import { browser } from 'wxt/browser';
+import { storage } from '#imports';
 import { getRndInteger } from '@/entrypoints/utils/helpers';
 import { buildSearchQuery, buildSearchUrl, nextDelayMinutes, shouldOpenMore, toInt } from '@/entrypoints/utils/search';
 import { getStorageItem, getStorageItems, setStorageItem, setStorageItems } from '@/entrypoints/hooks/useStorage';
 import { StorageValues } from '@/entrypoints/enums/storageValues';
 import { DEFAULTS } from '@/entrypoints/utils/settings';
+import { clearBadge, setSearchCountBadge } from '@/entrypoints/utils/browserAction';
 
 const ALARM_NAME = 'openTabAlarm';
 
 // Opens tab #1 immediately (currentSearch = 1), then schedules the rest via alarm.
 export async function startSearches(searchTimeout: number, searches: number, closeTimeSeconds: number): Promise<void> {
-    await setStorageItems({ isSearching: true, currentSearch: 1 }, StorageValues.SYNC);
-    // Tell the popup a run actually began, so its button flips to "Stop
-    // searches" only when searches are really running (not on a daily-set-only run).
-    browser.runtime.sendMessage({ action: 'searchStarted' }).catch(() => {});
     await openSearchTab(closeTimeSeconds * 1000);
+    await recordProgress(1);
     if (shouldOpenMore(1, searches)) {
         browser.alarms.create(ALARM_NAME, { delayInMinutes: nextDelayMinutes(searchTimeout) });
     } else {
@@ -23,20 +22,24 @@ export async function startSearches(searchTimeout: number, searches: number, clo
 
 export async function handleAlarmStep(alarm: { name: string }): Promise<void> {
     if (alarm.name !== ALARM_NAME) return;
-    const s = await getStorageItems(['searches', 'timeout', 'closeTime', 'currentSearch'], StorageValues.SYNC);
+    const s = await getStorageItems(['searches', 'timeout', 'closeTime', 'currentSearch', 'active'], StorageValues.SYNC);
     const searches = toInt(s.searches, DEFAULTS.searches);
     const searchTimeout = toInt(s.timeout, DEFAULTS.timeout);
     const closeTimeMs = toInt(s.closeTime, DEFAULTS.closeTime) * 1000;
     const opened = toInt(s.currentSearch, searches);
+    const isSearchesEnabled = s.active ?? DEFAULTS.active;
 
-    if (!shouldOpenMore(opened, searches)) {
+    // Alarms outlive the setting that created them (they survive a browser
+    // restart), so re-check the toggle every step: with "Daily searches" off,
+    // a leftover alarm must not keep opening Bing tabs.
+    if (!isSearchesEnabled || !shouldOpenMore(opened, searches)) {
         await stopSearches();
         return;
     }
     await openSearchTab(closeTimeMs);
     const nowOpened = opened + 1;
+    await recordProgress(nowOpened);
     if (shouldOpenMore(nowOpened, searches)) {
-        await setStorageItem('currentSearch', nowOpened, StorageValues.SYNC);
         browser.alarms.create(ALARM_NAME, { delayInMinutes: nextDelayMinutes(searchTimeout) });
     } else {
         await stopSearches();
@@ -45,8 +48,28 @@ export async function handleAlarmStep(alarm: { name: string }): Promise<void> {
 
 export async function stopSearches(): Promise<void> {
     await setStorageItem('isSearching', false, StorageValues.SYNC);
-    browser.runtime.sendMessage({ action: 'searchEnded' }).catch(() => {});
+    clearBadge();
     await browser.alarms.clearAll();
+}
+
+// Turning "Daily searches" off has to stop a run that is already in flight —
+// waiting for the next alarm would leave the popup claiming to be searching.
+// Watching storage (rather than reacting to a popup message) also covers the
+// toggle being synced from another device.
+export function watchSearchesToggle(): void {
+    storage.watch<boolean>('sync:active', (isEnabled) => {
+        if (isEnabled === false) void stopSearches();
+    });
+}
+
+// `currentSearch` is the number of search tabs opened in this run; the popup and
+// the toolbar badge both read it, so every step must persist it — including the
+// last one, or the popup would freeze one short of the total. `isSearching` is
+// re-affirmed here (not only at the start) so a run that outlives a service
+// worker restart still reports itself as running.
+async function recordProgress(opened: number): Promise<void> {
+    await setStorageItems({ currentSearch: opened, isSearching: true }, StorageValues.SYNC);
+    setSearchCountBadge(opened);
 }
 
 // The marAuto marker tells the bing-result content script this tab was opened

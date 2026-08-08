@@ -1,8 +1,8 @@
 {
-  "name": "microsoft-automatic-rewards",
+  "name": "search-automatic-rewards",
   "description": "Script that gives you maximum amount of microsoft rewards points every day automatically or by a click of a button.",
   "private": true,
-  "version": "3.0.0",
+  "version": "3.0.3",
   "type": "module",
   "scripts": {
     "dev": "wxt",

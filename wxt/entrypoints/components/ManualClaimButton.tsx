@@ -1,39 +1,17 @@
-import { useEffect, useState } from 'react';
 import { browser } from 'wxt/browser';
-import { getStorageItem } from '@/entrypoints/hooks/useStorage';
-import { StorageValues } from '@/entrypoints/enums/storageValues';
 
-// "Get rewards" starts a run; while running it flips to "Stop searches".
-// The background owns the `isSearching` key (writes it and messages
-// `searchEnded` when the run completes), so this component only reads it
-// once at mount and mirrors it in local state — it must never write it back,
-// or a stale read here would clobber the background's authoritative value.
-function ManualClaimButton() {
-    const [isSearching, setIsSearching] = useState(false);
+interface ManualClaimButtonProps {
+    isSearching: boolean;
+}
 
-    useEffect(() => {
-        getStorageItem<boolean>('isSearching', StorageValues.SYNC).then((v) => setIsSearching(v ?? false));
-    }, []);
-
-    useEffect(() => {
-        const listener = (request: { action?: string }) => {
-            if (request.action === 'searchStarted') setIsSearching(true);
-            else if (request.action === 'searchEnded') setIsSearching(false);
-        };
-        browser.runtime.onMessage.addListener(listener);
-        return () => browser.runtime.onMessage.removeListener(listener);
-    }, []);
-
+// "Get rewards" starts a run; while one is running it flips to "Stop searches".
+// The background owns the run state, so this button is purely controlled: it
+// sends the request and lets the state come back through storage — a local
+// optimistic flip could disagree with a run that never actually started (a
+// daily-set-only run makes no searches).
+function ManualClaimButton({ isSearching }: ManualClaimButtonProps) {
     function handleClick() {
-        if (isSearching) {
-            setIsSearching(false);
-            browser.runtime.sendMessage({ action: 'stop' });
-        } else {
-            // Don't optimistically flip to "searching" — the background only
-            // starts searches if that toggle is on, and emits `searchStarted`
-            // when it does. A daily-set-only run leaves the button unchanged.
-            browser.runtime.sendMessage({ action: 'popup' });
-        }
+        browser.runtime.sendMessage({ action: isSearching ? 'stop' : 'popup' });
     }
 
     return (
