@@ -109,7 +109,7 @@ function handleMessage(request: { action: string }): void {
 }
 
 async function openDailyRewards(): Promise<void> {
-    const tab = await browser.tabs.create({ url: 'https://rewards.bing.com//dashboard', active: false });
+    const tab = await browser.tabs.create({ url: 'https://rewards.bing.com/dashboard', active: false });
     return new Promise<void>(resolve => {
         function listener(tabId: number, changeInfo: { status?: string }): void {
             if (tabId===tab.id && changeInfo.status==='complete') {

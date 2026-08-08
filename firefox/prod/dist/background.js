@@ -105,7 +105,7 @@ function handleMessage(request) {
         void sendStopSearch();
 }
 async function openDailyRewards() {
-    const tab = await browser.tabs.create({ url: 'https://rewards.bing.com/', active: false });
+    const tab = await browser.tabs.create({ url: 'https://rewards.bing.com/dashboard', active: false });
     return new Promise(resolve => {
         function listener(tabId, changeInfo) {
             if (tabId === tab.id && changeInfo.status === 'complete') {
