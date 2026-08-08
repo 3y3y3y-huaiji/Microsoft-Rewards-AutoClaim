@@ -1,10 +1,10 @@
-# Microsoft Rewards Google Extension
+# Search automatic rewards
 
-![banner](chrome/imgs/banner.png)
+![banner](docs/images/banner.png)
 
 Get the most out of your Microsoft rewards account and earn points every day!
 
-If you like the extension, please give it a star on GitHub! <img src="chrome/imgs/github-star.png" alt="icon" height="32">
+If you like the extension, please give it a star on GitHub! <img src="docs/images/github-star.png" alt="icon" height="32">
 
 ## Download
 
@@ -14,9 +14,9 @@ If you like the extension, please give it a star on GitHub! <img src="chrome/img
 
 [Mobile app](https://github.com/spin311/MicrosoftRewardsWebsite/releases/tag/app)
 
-  If you enjoy the extension, 5-star rating would mean a lot:) <img src="chrome/imgs/stars5.jpeg" alt="5 Stars" height="16">
+  If you enjoy the extension, 5-star rating would mean a lot:) <img src="docs/images/stars5.jpeg" alt="5 Stars" height="16">
 
-## Donate <img src="chrome/imgs/justAGirl.png" alt="Cat" height="64">
+## Donate <img src="docs/images/justAGirl.png" alt="Cat" height="64">
 
 Donations help me make tools like this for free in my spare time. Any amount helps! ❤️
 
@@ -26,7 +26,7 @@ Donations help me make tools like this for free in my spare time. Any amount hel
 
 ## Features
 
-![Popup Screenshot](chrome/imgs/help3.png)
+![Popup Screenshot](docs/images/help3.png)
 
 1. Open 10 random tabs in Bing and close them once they are loaded.
 2. Automatically open tabs every day when the browser is opened (turned on by default).
@@ -37,22 +37,70 @@ Donations help me make tools like this for free in my spare time. Any amount hel
 7. Visit the Microsoft Rewards site and log in.
 8. [Donate with PayPal or any credit card](https://www.paypal.com/donate/?hosted_button_id=4WXEWMN3QGLGY).
 
-<img src="chrome/imgs/pin.png" alt="Pin extension" height="64">
+<img src="docs/images/pin.png" alt="Pin extension" height="64">
 
 Make sure to pin the extension.
 
 ## Project structure
 
+The browser extension is built with [WXT](https://wxt.dev/) and React. One
+codebase produces both the Chrome (MV3) and Firefox (MV2) builds — there is no
+longer a separate source tree per browser.
+
 ```
-/chrome - Chrome extension files
-  prod - Production files (Min files needed for the extension)
-  /src - Source files (TypeScript)
-  /styles - CSS files
-  /imgs - Images
-/microsoft_rewards_app - Android app files
+/wxt                        - Browser extension (WXT + React + TypeScript)
+  /entrypoints
+    background.ts           - Background service worker entry
+    /background             - Daily rewards, scheduling, search runner
+    rewards.content.ts      - Content script on rewards.bing.com
+    bingResult.content.ts   - Content script on Bing search results
+    /popup                  - Popup UI (React)
+    /components             - Shared React components
+    /hooks                  - React hooks (storage, search progress)
+    /utils                  - Search, progress, settings, helpers
+    /data                   - Search term pool
+    /enums, /types          - Shared TypeScript definitions
+  /public                   - Static assets copied into the build (icons)
+  wxt.config.ts             - Manifest and build configuration
+/microsoft_rewards_app      - Android app (Flutter)
+/assets                     - Source icon artwork (icon.svg)
+/scripts                    - Maintenance scripts (icon rasterization)
+/docs                       - Documentation and README images
 ```
 
+## Development
 
+All extension commands run from the `wxt` directory:
+
+```bash
+cd wxt
+npm install
+
+npm run dev              # Chrome, hot reload
+npm run dev:firefox      # Firefox, hot reload
+
+npm run compile          # TypeScript typecheck
+npm run test             # Unit tests (Vitest)
+
+npm run build            # Production build -> wxt/dist/chrome-mv3
+npm run build:firefox    # Production build -> wxt/dist/firefox-mv2
+npm run zip              # Packaged zip for store upload
+npm run zip:firefox
+```
+
+Build output lives in `wxt/dist` and is **not** committed — releases are
+published to the web stores and to GitHub Releases.
+
+To load an unpacked development build: run `npm run build`, then in Chrome open
+`chrome://extensions`, enable Developer mode, and "Load unpacked" from
+`wxt/dist/chrome-mv3`.
+
+### Legacy code
+
+Versions before the WXT rewrite used hand-written `chrome/` and `firefox/`
+source trees with committed compiled output. That code has been removed from
+the default branch and preserved on the [`legacy`](https://github.com/spin311/MicrosoftRewardsWebsite/tree/legacy)
+branch. Nothing on the default branch depends on it.
 
 ## Contact
 

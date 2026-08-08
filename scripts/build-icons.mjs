@@ -7,12 +7,9 @@ const svg = readFileSync(new URL('../assets/icon.svg', import.meta.url));
 
 // All current icon slots are 512x512 (browsers downscale per the manifest map).
 const targets = [
-  'chrome/prod/imgs/logo.png',
-  'chrome/prod/imgs/logo2.png',
-  'chrome/prod/imgs/logo3.png',
-  'firefox/prod/imgs/logo.png',
-  'firefox/prod/imgs/logo2.png',
-  'firefox/prod/imgs/logo3.png',
+  'wxt/public/imgs/logo.png',
+  'wxt/public/imgs/logo2.png',
+  'wxt/public/imgs/logo3.png',
   'microsoft_rewards_app/assets/images/auto_search.png',
 ];
 
