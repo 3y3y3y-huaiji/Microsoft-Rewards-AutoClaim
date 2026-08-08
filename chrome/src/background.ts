@@ -1,99 +1,228 @@
-chrome.runtime.onInstalled.addListener(function (details) {
-  if(details.reason === "install" || details.reason === "update"){
-    chrome.storage.sync.set({ "active": true });
-    chrome.storage.sync.set({ "level": 1 });
-    chrome.storage.sync.set({ "timeout": 7 });
-    setTimeout(function () {
-      chrome.tabs.create( {url: "https://spin311.github.io/MicrosoftRewardsWebsite/", active: true});
-    }, 1000);
-  }
-});
-// on startup, check if user has already clicked the checkbox
-chrome.runtime.onStartup.addListener(function(){
-    chrome.storage.sync.get("active", function (result) {
-      if (result.active) {
-        checkLastOpened();
-      }
-    });
-});
+// background.ts (Chrome MV3 service worker)
 
-//listen for messages from popup.ts
-chrome.runtime.onMessage.addListener(function(request){
-  if (request.action === "popup"){
-    popupBg();
-  }
-  else if (request.action === "check"){
-    checkLastOpened();
-  }
-});
+// Constants
+const WEBSITE_URL = "https://svitspindler.com/microsoft-automatic-rewards";
+const BING_SEARCH_URL = "https://www.bing.com/search?q=";
+const BING_SEARCH_PARAMS = "&qs=n&form=QBLH&sp=-1&pq=";
+const DEFAULT_SEARCHES = 12;
+const DEFAULT_TIMEOUT = 60;
+const DEFAULT_CLOSE_TIME = 5;
 
-//opens 10 tabs with bing searches
-function popupBg(): void {
-  const format: string = "https://www.bing.com/search?q=";
-  const format2: string = "&qs=n&form=QBLH&sp=-1&pq=";
-  let level: number = 1;
-  let searchTimeout: number = 7;
+const words: string[] = [
+    "food", "drink", "restaurant", "cafe", "bar", "pub", "club", "diner", "eatery", "tavern",
+    "museum", "bistro", "buffet", "canteen", "coffeehouse", "grill", "inn", "joint", "kitchen",
+    "lounge", "pizzeria", "saloon", "steakhouse", "tearoom", "trattoria", "brasserie", "brewery",
+    "cafeteria", "chophouse", "gastropub", "roadhouse", "rotisserie", "smorgasbord", "soda",
+    "soccer", "basketball", "baseball", "tennis", "cricket", "rugby", "golf", "hockey", "swimming",
+    "running", "cycling", "skiing", "snowboarding", "skating", "surfing", "fishing", "hiking",
+    "camping", "climbing", "dancing", "singing", "painting", "drawing", "sculpting", "photography",
+    "writing", "reading", "knitting", "sewing", "gardening", "cooking", "baking", "gaming", "chess",
+    "poker", "bridge", "scrabble", "monopoly", "puzzle", "crossword", "sudoku", "video games",
+    "console", "PCgaming", "arcade", "VRgaming", "mobilegaming", "boardgames", "cardgames",
+    "television", "computer", "smartphone", "laptop", "tablet", "camera", "headphones", "speaker",
+    "monitor", "keyboard", "mouse", "printer", "router", "drone", "microphone", "beach", "mountain",
+    "forest", "desert", "island", "ocean", "river", "lake", "park", "doctor", "teacher", "engineer",
+    "programmer", "designer", "artist", "chef", "nurse", "architect", "scientist", "collecting",
+    "woodworking", "origami", "pottery", "calligraphy", "jewelry", "metalwork", "glassblowing",
+    "astronomy", "volunteering", "physics", "chemistry", "biology", "mathematics", "history",
+    "geography", "literature", "language", "economics", "philosophy", "yoga", "meditation",
+    "fitness", "nutrition", "mindfulness", "stretching", "massage", "aromatherapy", "pilates",
+    "therapy", "birthday", "wedding", "graduation", "anniversary", "holiday", "festival", "concert",
+    "near", "google", "where", "how", "what", "can", "best", "cheapest", "top", "top10",
+    "find", "search", "locate", "discover", "explore", "lookup", "seek", "identify", "track", "uncover",
+    "nearby", "closest", "guide", "tutorial", "review", "comparison", "versus", "information",
+    "directions", "recommendations", "alternatives", "solutions", "help", "advice", "instructions",
+    "tips", "examples", "resources", "techniques", "methods", "how to", "ways to", "places to", "things to do", "restaurants near me", "best time to",
+    "cheap", "popular", "famous", "hidden gems", "activities", "events", "today", "tonight",
+    "open now", "family friendly", "pet friendly", "with kids", "for couples", "solo travel",
+    "budget travel", "luxury", "free", "local", "near me", "what is", "who is", "can I",
+    "should I", "when to", "why is", "how much", "how long", "how far", "how many", "does",
+    "is it safe", "easy", "quick", "simple", "step by step", "nearby attractions", "must see",
+    "reviews", "testimonials", "rating", "map", "price", "schedule", "availability", "book now",
+    "tickets", "opening hours", "closed", "weather", "forecast", "cheap flights", "best hotels",
+    "cuisine", "menu", "food near me", "best place for", "best way to", "directions to", "get to",
+    "how do I", "plan trip", "vacation ideas", "top rated", "most popular", "things to avoid",
+    "tips for", "travel guide", "insider tips", "how it works", "learn about", "overview",
+    "explained", "definition", "meaning", "origin", "background", "history of", "basics of",
+    "beginner guide", "example of", "sample", "template", "walkthrough", "demo"
+];
 
-  chrome.storage.sync.get(["level", "timeout"], function(results) {
-    if (results.timeout) searchTimeout = parseInt(results.timeout);
-    if (results.level > 1) level = 3;
-
-    for (let xp = 0; xp < level; xp++) {
-      let timeout: number = 1500 * xp;
-      setTimeout(async () => await createTabs(format, format2, searchTimeout), timeout);
-    }
-  });
+interface RuntimeMessage {
+    action: string;
 }
 
-function delay(ms: number): Promise<void> {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
+// Event Listeners
+chrome.runtime.onInstalled.addListener(handleInstallOrUpdate);
+chrome.runtime.onStartup.addListener(handleStartup);
+chrome.runtime.onMessage.addListener(handleMessage);
 
-async function createTabs(format: string, format2: string, searchTimeout: number): Promise<void> {
-  for (let i = 0; i < 10; i++) {
-    let randomString = Math.random().toString(36).substring(2, 7);
-    let url = format + randomString + format2;
-    openAndClose(url);
-    await delay(searchTimeout * 1000 - 500);
-  }
-}
+chrome.alarms.onAlarm.addListener(handleAlarms);
 
-function openAndClose(url: string): void {
-  chrome.tabs.create({
-        url: url, active: false
-      },
-      function (tab: any) {
-        let idCurr: number = tab.id;
-        //wait for tab to load before closing
-        chrome.tabs.onUpdated.addListener(function listener(tabId: number, changeInfo: chrome.tabs.TabChangeInfo) {
-          if (tabId === idCurr && changeInfo.status === "complete") {
-            chrome.tabs.onUpdated.removeListener(listener);
-            waitAndClose(idCurr);
-          }
+function handleAlarms(alarm: chrome.alarms.Alarm): void {
+    if (alarm.name === 'openTabAlarm') {
+        chrome.storage.sync.get(["searches", "timeout", "closeTime", "useWords", 'currentSearch'], (results) => {
+            let searchTimeout = parseInt(results.timeout) ?? DEFAULT_TIMEOUT;
+            const searches = parseInt(results.searches) ?? DEFAULT_SEARCHES;
+            const closeTime = (parseInt(results.closeTime) ?? DEFAULT_CLOSE_TIME) * 1000;
+            let currentSearch = parseInt(results.currentSearch) ?? searches;
+            const useWords = results.useWords ?? true;
+            openTab(useWords, closeTime);
+            currentSearch++;
+            if (currentSearch < searches) {
+                if (searchTimeout <= 1) searchTimeout = 1;
+                const delayInMinutes = ((searchTimeout - 1) * 1000 + getRandomNumber(0, 2000)) / 60000;
+                chrome.storage.sync.set({ currentSearch });
+                chrome.alarms.create('openTabAlarm', { delayInMinutes });
+
+            } else {
+                sendStopSearch();
+            }
         });
-      });
-}
-
-//check if user has already opened tabs today
-function checkLastOpened(): void {
-  const today = new Date().toLocaleDateString();
-  chrome.storage.sync.get("lastOpened", function (result) {
-    if (result.lastOpened !== today) {
-      popupBg();
-      chrome.storage.sync.set({ "lastOpened": today });
     }
-  });
+
 }
 
-//wait 0.1 second before closing tab
-function waitAndClose(id: number): void {
-  setTimeout(function () {
-    chrome.tabs.get(id, function(tab) {
-      if (!chrome.runtime.lastError) {
-        chrome.tabs.remove(id);
+// Event Handlers
+function handleInstallOrUpdate(details: chrome.runtime.InstalledDetails): void {
+    if (details.reason === "install") {
+        chrome.storage.sync.set({
+            active: true,
+            timeout: DEFAULT_TIMEOUT,
+            searches: DEFAULT_SEARCHES,
+            closeTime: DEFAULT_CLOSE_TIME,
+            useWords: true,
+            isSearching: false,
+            autoDaily: false
+        });
+        chrome.runtime.setUninstallURL(`https://svitspindler.com/uninstall?extension=${encodeURI("Microsoft Automatic Rewards")}`);
+        setTimeout(() => {
+            chrome.tabs.create({ url: WEBSITE_URL, active: true });
+        }, 1000);
+    }  else if (details.reason === "update") {
+        chrome.action.setBadgeText({text: "New"});
+    }
+}
+
+function handleStartup(): void {
+    chrome.storage.sync.get(["active", "autoDaily"], (result) => {
+        if (result.active || result.autoDaily) {
+            checkLastOpened();
         }
     });
-  }, 500);
+    chrome.storage.sync.set({ isSearching: false });
 }
 
+function handleMessage(request: RuntimeMessage): void {
+    if (request.action === "popup") {
+        popupBg(true);
+    } else if (request.action === "check") {
+        checkLastOpened();
+    } else if (request.action === "stop") {
+        sendStopSearch();
+    }
+}
 
+async function openDailyRewards(): Promise<void> {
+    const tab = await chrome.tabs.create({ url: "https://rewards.bing.com/dashboard", active: false });
+
+    // Wait for the tab to load completely before sending message
+    await new Promise<void>((resolve) => {
+        function checkTab(tabId: number, changeInfo: chrome.tabs.TabChangeInfo): void {
+            if (tabId === tab.id && changeInfo.status === "complete") {
+                chrome.tabs.onUpdated.removeListener(checkTab);
+                setTimeout(() => {
+                    chrome.tabs.sendMessage(tab.id!, { action: "openDaily" });
+                    resolve();
+                }, 300);
+            }
+        }
+        chrome.tabs.onUpdated.addListener(checkTab);
+    });
+
+    setTimeout(() => chrome.tabs.remove(tab.id!), 10000);
+}
+
+// Main Functions
+function popupBg(manualCall = false): void {
+    chrome.storage.sync.get(["searches", "timeout", "closeTime", "useWords", "autoDaily", "active"], (results) => {
+        const searchTimeout = results.timeout != null ? parseInt(results.timeout) : DEFAULT_TIMEOUT;
+        const searches = results.searches != null ? parseInt(results.searches) : DEFAULT_SEARCHES;
+        const closeTime = results.closeTime != null ? parseInt(results.closeTime) : DEFAULT_CLOSE_TIME;
+        const useWords = results.useWords ?? true;
+        const autoDaily = results.autoDaily ?? true;
+        const autoTabs = results.active ?? true;
+        if (autoDaily) openDailyRewards();
+        if ((manualCall || autoTabs) && searches > 0) createTabs(searchTimeout, searches, closeTime, useWords);
+    });
+}
+
+function getRandomNumber(min: number, max: number): number {
+    return Math.floor(Math.random() * (max - min + 1) + min);
+}
+
+function getRandomElement<T>(array: T[]): T {
+    return array[getRandomNumber(0, array.length - 1)];
+}
+
+function sendStopSearch(): void {
+    chrome.storage.sync.set({isSearching: false});
+    chrome.runtime.sendMessage({action: "searchEnded"});
+    chrome.alarms.clearAll();
+}
+
+async function openTab(useWords: boolean, closeTime: number): Promise<void> {
+    let randomString = '';
+    if (useWords) {
+        const numberOfWords = getRandomNumber(3, 5);
+        for (let i = 0; i < numberOfWords; i++) {
+            randomString += `${getRandomElement(words)} `;
+        }
+    } else {
+        randomString = Math.random().toString(36).substring(2, getRandomNumber(5, 8));
+    }
+    const randomChar = Math.random().toString(36).substring(2, 3);
+    randomString = `${randomChar}${randomString}`;
+    const url = `${BING_SEARCH_URL}${randomString}${BING_SEARCH_PARAMS}`;
+    openAndClose(url, closeTime + getRandomNumber(0, 1000));
+}
+
+async function createTabs(searchTimeout: number, searches: number, closeTime: number, useWords = true): Promise<void> {
+    await chrome.storage.sync.set({ isSearching: true, currentSearch: 0 });
+    if (searchTimeout <= 1) searchTimeout = 1;
+    await openTab(useWords, closeTime * 1000);
+    const timeToWait =  (searchTimeout - 1) * 1000 + getRandomNumber(0, 2000);
+    chrome.alarms.create('openTabAlarm', { delayInMinutes: timeToWait / 60000 });
+}
+
+function openAndClose(url: string, closeTime: number): void {
+    chrome.tabs.create({ url, active: false }, (tab) => {
+        const idCurr = tab.id!;
+        chrome.tabs.onUpdated.addListener(function listener(tabId: number, changeInfo: chrome.tabs.TabChangeInfo) {
+            if (tabId === idCurr && changeInfo.status === "complete") {
+                chrome.tabs.onUpdated.removeListener(listener);
+                waitAndClose(idCurr, closeTime);
+            }
+        });
+    });
+}
+
+function checkLastOpened(): void {
+    const today = new Date().toLocaleDateString();
+    chrome.storage.sync.get("lastOpened", (result) => {
+        if (result.lastOpened !== today) {
+            popupBg();
+            chrome.storage.sync.set({ lastOpened: today });
+        }
+    });
+}
+
+function waitAndClose(id: number, timeout = DEFAULT_CLOSE_TIME * 1000): void {
+    if (timeout <= 0) timeout = 500;
+    setTimeout(() => {
+        chrome.tabs.get(id, () => {
+            if (!chrome.runtime.lastError) {
+                chrome.tabs.remove(id);
+            }
+        });
+    }, (timeout - 500)  + getRandomNumber(0, 1000));
+}

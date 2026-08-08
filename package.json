@@ -1,5 +1,15 @@
 {
+  "scripts": {
+    "build:chrome": "tsc -p chrome/tsconfig.json",
+    "build:firefox": "tsc -p firefox/tsconfig.json",
+    "build": "npm run build:chrome && npm run build:firefox",
+    "typecheck:chrome": "tsc -p chrome/tsconfig.json --noEmit",
+    "typecheck:firefox": "tsc -p firefox/tsconfig.json --noEmit",
+    "typecheck": "npm run typecheck:chrome && npm run typecheck:firefox"
+  },
   "devDependencies": {
-    "@types/firefox-webext-browser": "^120.0.4"
+    "@types/chrome": "^0.0.268",
+    "@types/firefox-webext-browser": "^120.0.4",
+    "typescript": "^5.5.4"
   }
 }
