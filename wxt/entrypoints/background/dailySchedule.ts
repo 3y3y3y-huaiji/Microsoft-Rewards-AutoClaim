@@ -6,8 +6,9 @@ import { DEFAULTS } from '@/entrypoints/utils/settings';
 import { clearBadge, setBadgeText } from '@/entrypoints/utils/browserAction';
 import { openDailyRewards } from './dailyRewards';
 import { startSearches } from './searchRunner';
+import { siteConfig } from '@/entrypoints/config/siteConfig';
 
-const WEBSITE_URL = 'https://svitspindler.com/microsoft-automatic-rewards';
+const WEBSITE_URL = siteConfig.officialWebsite;
 
 // Runs whatever the user has enabled: the daily set if "Open daily set
 // automatically" is on, and the Bing searches if "Do daily searches
@@ -47,9 +48,7 @@ export async function handleInstallOrUpdate(details: { reason: string }): Promis
             isSearching: false,
             currentSearch: 0,
         }, StorageValues.SYNC);
-        await browser.runtime.setUninstallURL(
-            `https://svitspindler.com/uninstall?extension=${encodeURI('Microsoft Automatic Rewards')}`
-        );
+        await browser.runtime.setUninstallURL(siteConfig.uninstallUrl);
         setTimeout(() => { browser.tabs.create({ url: WEBSITE_URL, active: true }); }, 1000);
     } else if (details.reason === 'update') {
         setBadgeText('新');

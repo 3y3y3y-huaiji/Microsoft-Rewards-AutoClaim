@@ -1,5 +1,5 @@
 {
-  "name": "search-automatic-rewards",
+  "name": "microsoft-rewards-autosearch",
   "description": "自动或一键获取每日最高微软 Rewards 积分的浏览器扩展。",
   "private": true,
   "version": "3.0.3",

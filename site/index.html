@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>微软 Rewards 自动搜索助手 — 官方网站 & 使用指南</title>
+  <meta name="description" content="微软 Rewards 自动搜索助手，全自动高效完成 Bing 桌面端与移动端搜索任务，支持随机安全延迟、每日任务集预设与多浏览器支持。">
+  <style>
+    :root {
+      --bg-color: #f8fafc;
+      --card-bg: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --primary-light: #eff6ff;
+      --accent: #0284c7;
+      --border-color: #e2e8f0;
+      --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+      --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+      --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+      --radius: 12px;
+      --font-stack: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    [data-theme="dark"] {
+      --bg-color: #0f172a;
+      --card-bg: #1e293b;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --primary: #38bdf8;
+      --primary-hover: #7dd3fc;
+      --primary-light: rgba(56, 189, 248, 0.1);
+      --accent: #38bdf8;
+      --border-color: #334155;
+      --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
+      --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.3);
+      --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.4);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg-color: #0f172a;
+        --card-bg: #1e293b;
+        --text-main: #f8fafc;
+        --text-muted: #94a3b8;
+        --primary: #38bdf8;
+        --primary-hover: #7dd3fc;
+        --primary-light: rgba(56, 189, 248, 0.1);
+        --accent: #38bdf8;
+        --border-color: #334155;
+        --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
+        --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.3);
+        --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.4);
+      }
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-stack);
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      line-height: 1.6;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    a {
+      color: var(--primary);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    a:hover {
+      color: var(--primary-hover);
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+
+    /* Navbar */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background-color: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-color);
+      transition: background-color 0.3s;
+    }
+    [data-theme="dark"] header, @media (prefers-color-scheme: dark) {
+      header {
+        background-color: rgba(15, 23, 42, 0.85);
+      }
+    }
+
+    .nav-wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 70px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-weight: 700;
+      font-size: 1.25rem;
+      color: var(--text-main);
+    }
+
+    .logo-icon {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, #2563eb, #0284c7);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-weight: bold;
+      font-size: 1rem;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--text-main);
+      font-weight: 500;
+      font-size: 0.95rem;
+    }
+
+    .nav-links a:hover {
+      color: var(--primary);
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .theme-toggle-btn {
+      background: none;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 0.5rem 0.75rem;
+      cursor: pointer;
+      color: var(--text-main);
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: background-color 0.2s;
+    }
+
+    .theme-toggle-btn:hover {
+      background-color: var(--primary-light);
+    }
+
+    /* Hero Section */
+    .hero {
+      padding: 5rem 0 4rem;
+      text-align: center;
+      background: radial-gradient(circle at 50% 20%, var(--primary-light), transparent 70%);
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 0.35rem 1rem;
+      background-color: var(--primary-light);
+      color: var(--primary);
+      border-radius: 9999px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+      border: 1px solid rgba(37, 99, 235, 0.2);
+    }
+
+    .hero-title {
+      font-size: 3rem;
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 1.25rem;
+      background: linear-gradient(135deg, var(--text-main) 0%, var(--primary) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-subtitle {
+      font-size: 1.2rem;
+      color: var(--text-muted);
+      max-width: 720px;
+      margin: 0 auto 2.5rem;
+      line-height: 1.7;
+    }
+
+    .hero-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 3rem;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.85rem 1.75rem;
+      font-weight: 600;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 1rem;
+    }
+
+    .btn-primary {
+      background-color: var(--primary);
+      color: #ffffff !important;
+      box-shadow: var(--shadow-md);
+    }
+
+    .btn-primary:hover {
+      opacity: 0.92;
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .btn-secondary {
+      background-color: var(--card-bg);
+      color: var(--text-main);
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .btn-secondary:hover {
+      background-color: var(--primary-light);
+      transform: translateY(-2px);
+    }
+
+    /* Card & Grid UI */
+    .section {
+      padding: 5rem 0;
+      border-top: 1px solid var(--border-color);
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 3.5rem;
+    }
+
+    .section-title {
+      font-size: 2.25rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+    }
+
+    .section-subtitle {
+      color: var(--text-muted);
+      font-size: 1.1rem;
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      padding: 2rem;
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .feature-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 10px;
+      background-color: var(--primary-light);
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .card-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+    }
+
+    .card-desc {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    /* Installation Tabs */
+    .tabs-nav {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-bottom: 2.5rem;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 1rem;
+    }
+
+    .tab-btn {
+      background: none;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      border-radius: 8px;
+      transition: all 0.2s;
+    }
+
+    .tab-btn.active {
+      background-color: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .tab-content {
+      display: none;
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      padding: 2.5rem;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    .steps-list {
+      list-style: none;
+      counter-reset: step-counter;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .steps-list li {
+      counter-increment: step-counter;
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+      font-size: 1rem;
+    }
+
+    .steps-list li::before {
+      content: counter(step-counter);
+      background-color: var(--primary);
+      color: #fff;
+      font-weight: 700;
+      border-radius: 50%;
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 0.875rem;
+    }
+
+    code {
+      background-color: var(--primary-light);
+      color: var(--primary);
+      padding: 0.2rem 0.4rem;
+      border-radius: 4px;
+      font-family: monospace;
+      font-size: 0.9em;
+    }
+
+    /* FAQ Accordion */
+    .faq-list {
+      max-width: 800px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .faq-item {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .faq-question {
+      width: 100%;
+      padding: 1.25rem 1.5rem;
+      text-align: left;
+      background: none;
+      border: none;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text-main);
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .faq-question::after {
+      content: "+";
+      font-size: 1.5rem;
+      color: var(--primary);
+      transition: transform 0.2s;
+    }
+
+    .faq-item.active .faq-question::after {
+      content: "−";
+    }
+
+    .faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease, padding 0.3s ease;
+      padding: 0 1.5rem;
+      color: var(--text-muted);
+      line-height: 1.7;
+    }
+
+    .faq-item.active .faq-answer {
+      max-height: 300px;
+      padding: 0 1.5rem 1.25rem 1.5rem;
+    }
+
+    /* Sponsor Section */
+    .sponsor-card {
+      background: linear-gradient(135deg, var(--card-bg) 0%, var(--primary-light) 100%);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      padding: 3rem 2rem;
+      text-align: center;
+      max-width: 800px;
+      margin: 0 auto;
+      box-shadow: var(--shadow-md);
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--border-color);
+      padding: 3rem 0;
+      background-color: var(--card-bg);
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+      list-style: none;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .hero-title {
+        font-size: 2.25rem;
+      }
+      .nav-links {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <header>
+    <div class="container nav-wrapper">
+      <a href="#" class="logo">
+        <div class="logo-icon">M</div>
+        <span>微软 Rewards 自动搜索助手</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="#features">功能</a></li>
+        <li><a href="#install">使用指南</a></li>
+        <li><a href="#faq">常见问题</a></li>
+        <li><a href="#sponsor">赞助与社区</a></li>
+        <li><a href="https://github.com/3y3y3y-huaiji/MicrosoftRewardsWebsite" target="_blank" rel="noopener">GitHub</a></li>
+      </ul>
+      <div class="nav-actions">
+        <button class="theme-toggle-btn" id="themeToggleBtn" aria-label="切换主题">
+          <span id="themeIcon">🌙</span> <span id="themeText">深色</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container">
+      <div class="badge">主线开源 · 自动化 Rewards 积分助手</div>
+      <h1 class="hero-title">微软 Rewards 自动搜索助手</h1>
+      <p class="hero-subtitle">
+        全自动高效完成 Bing 每日桌面与移动端搜索任务，支持随机安全延迟、每日任务集预设与多浏览器开箱即用。
+      </p>
+      <div class="hero-buttons">
+        <a href="#install" class="btn btn-primary">使用指南 / 立即安装</a>
+        <a href="https://github.com/3y3y3y-huaiji/MicrosoftRewardsWebsite" target="_blank" rel="noopener" class="btn btn-secondary">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+          GitHub 仓库
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="section" id="features">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">核心功能</h2>
+        <p class="section-subtitle">专注高效、安全与便捷的 Rewards 积分搜集体验</p>
+      </div>
+      <div class="grid-4">
+        <div class="card">
+          <div class="feature-icon">🔍</div>
+          <h3 class="card-title">Bing 自动搜索</h3>
+          <p class="card-desc">自动模拟真实的 Bing 桌面端与移动端搜索，内置智能随机词库与防重复算法。</p>
+        </div>
+        <div class="card">
+          <div class="feature-icon">🎯</div>
+          <h3 class="card-title">每日任务集预设</h3>
+          <p class="card-desc">一键自动打开并完成 Rewards 每日任务卡片、问答测试与每日活动积分。</p>
+        </div>
+        <div class="card">
+          <div class="feature-icon">⏱️</div>
+          <h3 class="card-title">随机安全延迟</h3>
+          <p class="card-desc">内置随机时间间隔与智能防抖，安全模拟真人浏览频率，有效避免风控冷却。</p>
+        </div>
+        <div class="card">
+          <div class="feature-icon">⭐</div>
+          <h3 class="card-title">会员等级预设</h3>
+          <p class="card-desc">针对 Level 1 / Level 2 会员预置专属搜寻目标与上限配置，轻松无缝切换。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Installation Guide Section -->
+  <section class="section" id="install">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">安装与使用指南</h2>
+        <p class="section-subtitle">简单几步，即可在各大主流浏览器中使用</p>
+      </div>
+      
+      <div class="tabs-nav">
+        <button class="tab-btn active" data-tab="chrome-edge">Chrome / Edge 步骤</button>
+        <button class="tab-btn" data-tab="firefox">Firefox 临时扩展步骤</button>
+        <button class="tab-btn" data-tab="config">常用配置建议</button>
+      </div>
+
+      <div class="tab-content active" id="tab-chrome-edge">
+        <ol class="steps-list">
+          <li>从 GitHub Releases 页面下载最新版 <code>wxt</code> 或解压扩展包至本地目录。</li>
+          <li>打开浏览器扩展管理页面：Chrome 请在地址栏输入 <code>chrome://extensions</code>，Edge 请输入 <code>edge://extensions</code>。</li>
+          <li>在右上角开启 <strong>“开发者模式” (Developer mode)</strong> 开关。</li>
+          <li>点击左上角的 <strong>“加载已解压的扩展程序” (Load unpacked)</strong> 按钮。</li>
+          <li>在弹出的文件选择框中选择解压出来的插件根目录，完成安装。</li>
+        </ol>
+      </div>
+
+      <div class="tab-content" id="tab-firefox">
+        <ol class="steps-list">
+          <li>打开 Firefox 浏览器，在地址栏输入 <code>about:debugging#/runtime/this-firefox</code> 并按回车。</li>
+          <li>点击右上方的 <strong>“临时加载附加组件...” (Load Temporary Add-on...)</strong> 按钮。</li>
+          <li>在文件选择对话框中，选择解压包中的 <code>manifest.json</code> 文件。</li>
+          <li>扩展加载成功后即可在扩展栏菜单中开始使用。</li>
+        </ol>
+      </div>
+
+      <div class="tab-content" id="tab-config">
+        <ul class="steps-list">
+          <li><strong>搜索延迟设置：</strong>推荐开启“随机延迟”，建议间隔设置为 <code>3 ~ 8 秒</code>，模拟真实人类搜索行为。</li>
+          <li><strong>账号状态：</strong>请确保您已在 <a href="https://rewards.bing.com/" target="_blank" rel="noopener">rewards.bing.com</a> 登录 Microsoft 账号。</li>
+          <li><strong>后台定时任务：</strong>开启自动触发搜索功能后，保持浏览器后台运行即可自动按设定完成每日任务。</li>
+        </ul>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="section" id="faq">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">常见问题解答 (FAQ)</h2>
+        <p class="section-subtitle">解答您在使用过程中的常见疑问</p>
+      </div>
+
+      <div class="faq-list">
+        <div class="faq-item">
+          <button class="faq-question">安全性说明：使用本助手是否安全？会封号吗？</button>
+          <div class="faq-answer">
+            助手采用纯前端浏览器 API 模拟真人搜索，内置随机安全延迟与防抖，绝不出售或收集任何个人隐私信息。只要合理设置搜索间隔（建议 3-8 秒），完全符合常规使用习惯。
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question">为什么有时候搜索不增加积分？</button>
+          <div class="faq-answer">
+            微软 Rewards 对搜索间隔和每日搜索频次存在冷却限制（如某些账号存在 15 分钟冷却机制）。请确认您已正确登录 Bing 账号，并在助手配置中适当调大搜索随机延迟时间。
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question">浏览器支持：支持哪些浏览器？</button>
+          <div class="faq-answer">
+            完全兼容 Microsoft Edge、Google Chrome、Brave、Opera 以及 Firefox 等支持 Manifest V3 标准的主流浏览器。
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question">自动启动：可以自动定时启动搜索吗？</button>
+          <div class="faq-answer">
+            可以！在 Popup 扩展设置中开启后台定时任务功能，只要浏览器保持后台运行或启动，即可自动按照预设时间触发每日搜索。
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question">每日积分上限是多少？</button>
+          <div class="faq-answer">
+            Level 1 会员通常每日上限为 30-50 分；Level 2 会员桌面端 90-150 分、移动端 60 分。助手已预置会员等级选择，自动适配对应的搜寻目标。
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sponsor & Community Section -->
+  <section class="section" id="sponsor">
+    <div class="container">
+      <div class="sponsor-card">
+        <h2 class="section-title" style="margin-bottom: 1rem;">赞助与开源社区</h2>
+        <p style="color: var(--text-muted); font-size: 1.1rem; margin-bottom: 2rem;">
+          本项目为完全开源免费的非商业项目。如果此工具帮助您节省了时间，欢迎点个 Star 支持我们持续维护与更新！
+        </p>
+        <div style="display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;">
+          <a href="https://github.com/3y3y3y-huaiji/MicrosoftRewardsWebsite" target="_blank" rel="noopener" class="btn btn-primary">
+            给仓库点赞 (Star)
+          </a>
+          <a href="https://github.com/3y3y3y-huaiji/MicrosoftRewardsWebsite/issues" target="_blank" rel="noopener" class="btn btn-secondary">
+            反馈 Bug / 建议 (Issues)
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <ul class="footer-links">
+        <li><a href="#features">功能</a></li>
+        <li><a href="#install">使用指南</a></li>
+        <li><a href="#faq">FAQ</a></li>
+        <li><a href="uninstall.html">卸载反馈</a></li>
+        <li><a href="https://github.com/3y3y3y-huaiji/MicrosoftRewardsWebsite" target="_blank" rel="noopener">GitHub</a></li>
+      </ul>
+      <p>Copyright © 2026 3y3y3y-huaiji. All rights reserved.</p>
+      <p style="margin-top: 0.5rem; font-size: 0.85rem;">Licensed under the Apache License, Version 2.0.</p>
+    </div>
+  </footer>
+
+  <script>
+    // Dark mode toggle logic
+    const themeToggleBtn = document.getElementById('themeToggleBtn');
+    const themeIcon = document.getElementById('themeIcon');
+    const themeText = document.getElementById('themeText');
+
+    function setTheme(isDark) {
+      if (isDark) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        themeIcon.textContent = '☀️';
+        themeText.textContent = '浅色';
+        localStorage.setItem('theme', 'dark');
+      } else {
+        document.documentElement.setAttribute('data-theme', 'light');
+        themeIcon.textContent = '🌙';
+        themeText.textContent = '深色';
+        localStorage.setItem('theme', 'light');
+      }
+    }
+
+    // Init theme
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      setTheme(true);
+    } else {
+      setTheme(false);
+    }
+
+    themeToggleBtn.addEventListener('click', () => {
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      setTheme(!isDark);
+    });
+
+    // Tab switching
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    const tabContents = document.querySelectorAll('.tab-content');
+
+    tabBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const targetTab = btn.getAttribute('data-tab');
+        
+        tabBtns.forEach(b => b.classList.remove('active'));
+        tabContents.forEach(c => c.classList.remove('active'));
+
+        btn.classList.add('active');
+        document.getElementById(`tab-${targetTab}`).classList.add('active');
+      });
+    });
+
+    // FAQ Accordion
+    const faqItems = document.querySelectorAll('.faq-item');
+    faqItems.forEach(item => {
+      const question = item.querySelector('.faq-question');
+      question.addEventListener('click', () => {
+        const isActive = item.classList.contains('active');
+        faqItems.forEach(i => i.classList.remove('active'));
+        if (!isActive) {
+          item.classList.add('active');
+        }
+      });
+    });
+  </script>
+</body>
+</html>

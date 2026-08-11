@@ -1,101 +1,121 @@
-# 微软 Rewards 自动搜索器
+# 微软 Rewards 自动搜索助手 (Microsoft Rewards AutoSearch)
 
-![banner](docs/images/banner.png)
+[![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
+[![Framework: WXT](https://img.shields.io/badge/Framework-WXT-green.svg)](https://wxt.dev/)
+[![Language: TypeScript](https://img.shields.io/badge/Language-TypeScript-blue.svg)](https://www.typescriptlang.org/)
+[![Tests: 37 Passed](https://img.shields.io/badge/Tests-37%20Passed-brightgreen.svg)]()
 
-充分利用你的微软 Rewards 账号，每天轻松获取积分！
+## 📖 项目简介 (Overview)
 
-如果你喜欢这个扩展，请在 GitHub 上为它点个 Star！ <img src="docs/images/github-star.png" alt="icon" height="32">
+**微软 Rewards 自动搜索助手 (Microsoft Rewards AutoSearch)** 是一款 100% 纯净无广告、完全开源的 Microsoft Rewards 自动化搜索工具。基于现代化的 [WXT](https://wxt.dev/) 框架与 React + TypeScript 构建，旨在帮助广大微软 Rewards 用户安全、高效、自动化地获取每日 Bing 搜索积分。
 
-## 下载
+本项目已全面清理所有第三方推广广告与恶意外链，并采用开放透明的 Apache License 2.0 开源协议发布，代码库完全解耦，支持一键部署官方静态站点至 Cloudflare Pages。
 
-[Chrome 应用商店](https://chromewebstore.google.com/detail/microsoft-automatic-rewar/ocmmbfdhomnkljmjkmafegefcgcfkefo)  
+---
 
-[Firefox 附加组件商店](https://addons.mozilla.org/en-US/firefox/addon/microsoft-automatic-rewards/)
+## ✨ 核心功能 (Features)
 
-[移动端 App](https://github.com/spin311/MicrosoftRewardsWebsite/releases/tag/app)
+- 🤖 **全自动搜索执行 (Automated Search)**：自动在 Bing 产生桌面端及移动端随机关键词搜索，完成指定搜索次数后自动关闭搜索标签页。
+- 🎁 **任务集一键领取 (Task Set Claims)**：支持自动识别并辅助完成 Rewards 仪表盘中的每日任务集（Daily Sets）与额外活动卡片。
+- ⏱️ **随机延迟安全防护 (Random Delay Safety)**：内建智能随机搜索间隔与标签页留存等待，模拟真实人类操作习惯，保障账号安全。
+- 👑 **会员等级预设 (Membership Presets)**：内置 Level 1（PC 10次 / 30分）、Level 2（PC 30次 / 90分 + 移动端 20次 / 60分）以及自定义策略预设，一键快速切换。
+- 🛡️ **100% 纯净无广告 (100% Ad-Free)**：无第三方软件推荐、无弹窗广告、无私货推导，打造极致纯粹的使用体验。
 
-如果你喜欢这个扩展，请给予 5 星好评，这对我很重要 :) <img src="docs/images/stars5.jpeg" alt="5 Stars" height="16">
+---
 
-## 赞助 <img src="docs/images/justAGirl.png" alt="Cat" height="64">
+## 🚀 安装指南 (Installation Guide)
 
-您的赞助能帮助我在业余时间继续免费开发此类工具。任何金额都是巨大的支持！❤️
+### Chrome / Microsoft Edge / Brave
+1. 从 Releases 页面或自行编译打包下载最新的 `chrome-mv3` Zip 压缩包并解压（或获得解压后的文件夹）。
+2. 在浏览器地址栏输入并打开扩展管理页面：
+   - Chrome / Brave: `chrome://extensions`
+   - Edge: `edge://extensions`
+3. 勾选页面右上角的 **“开发者模式” (Developer mode)**。
+4. 点击 **“加载已解压的扩展程序” (Load unpacked)** 按钮。
+5. 选择项目构建好的 `wxt/dist/chrome-mv3` 目录即可完成安装。
+6. 建议在浏览器工具栏中将扩展图标**固定 (Pin)**，方便日常使用与状态查看。
 
-[![Donate with PayPal button](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/donate/?hosted_button_id=4WXEWMN3QGLGY)
+### Mozilla Firefox
+1. 打开 Firefox 地址栏并输入 `about:debugging#/runtime/this-firefox`。
+2. 点击 **“临时载入附加组件...” (Load Temporary Add-on...)**。
+3. 选择 `wxt/dist/firefox-mv2` 目录中的 `manifest.json` 文件或编译打包产物。
 
+---
 
+## 🛠️ 开发与测试指南 (Development & Testing)
 
-## 功能特点
+本扩展采用 TypeScript + React 开发，基于 WXT 现代化扩展构建工具，测试套件使用 Vitest。
 
-![Popup Screenshot](docs/images/help3.png)
+### 前置要求
+- Node.js >= 18.0.0
+- npm >= 9.0.0
 
-1. 在 Bing 中自动打开 10 个随机搜索标签页，加载完成后自动关闭。
-2. 每天首次打开浏览器时自动打开搜索标签页（默认开启）。
-3. 可自定义标签页打开的间隔时间（单位：秒；设置为 0 则同时打开所有标签页）。
-4. 可自定义搜索次数。
-5. 可自定义标签页关闭前的等待时间（单位：秒；设置为 0 则加载完即关闭）。
-6. GitHub 页面包含完整源代码和文档。
-7. 快速访问微软 Rewards 官方页面并登录。
-8. [使用 PayPal 或信用卡进行赞助](https://www.paypal.com/donate/?hosted_button_id=4WXEWMN3QGLGY)。
-
-<img src="docs/images/pin.png" alt="Pin extension" height="64">
-
-请确保已将扩展程序固定到浏览器工具栏。
-
-## 项目结构
-
-本浏览器扩展基于 [WXT](https://wxt.dev/) 和 React 构建。一套代码库同时生成 Chrome (MV3) 和 Firefox (MV2) 构建版本 — 不再为不同浏览器维护独立的源码树。
-
-```
-/wxt                        - 浏览器扩展源码 (WXT + React + TypeScript)
-  /entrypoints
-    background.ts           - 后台 Service Worker 入口
-    /background             - 每日奖励、调度计划、搜索运行器
-    rewards.content.ts      - rewards.bing.com 内容脚本
-    bingResult.content.ts   - Bing 搜索结果页内容脚本
-    /popup                  - 弹窗界面 (React)
-    /components             - 共享 React 组件
-    /hooks                  - React Hooks (存储管理、搜索进度)
-    /utils                  - 搜索、进度、设置及辅助函数
-    /data                   - 搜索词库
-    /enums, /types          - 共享 TypeScript 类型定义
-  /public                   - 复制到构建产物中的静态资源 (图标)
-  wxt.config.ts             - Manifest 配置与构建配置
-/microsoft_rewards_app      - Android 应用 (Flutter)
-/assets                     - 图标源文件 (icon.svg)
-/scripts                    - 维护脚本 (图标栅格化处理)
-/docs                       - 文档与 README 图片
-```
-
-## 开发指南
-
-所有扩展相关的命令均在 `wxt` 目录下运行：
-
+### 开发命令
 ```bash
+# 进入扩展工程目录
 cd wxt
+
+# 安装依赖
 npm install
 
-npm run dev              # Chrome 模式开发，支持热重载
-npm run dev:firefox      # Firefox 模式开发，支持热重载
+# 启动 Chrome 开发调试 (支持 HMR 热更新)
+npm run dev
 
-npm run compile          # TypeScript 类型检查
-npm run test             # 单元测试 (Vitest)
+# 启动 Firefox 开发调试
+npm run dev:firefox
 
-npm run build            # 生产环境构建 -> wxt/dist/chrome-mv3
-npm run build:firefox    # 生产环境构建 -> wxt/dist/firefox-mv2
-npm run zip              # 打包 Zip 文件供商店上传
-npm run zip:firefox
+# TypeScript 类型检查
+npm run compile
+
+# 运行 Vitest 单元测试套件 (包含 37+ 单元测试)
+npm run test
+
+# 生产环境打包构建
+npm run build           # 构建 Chrome MV3 产物 -> wxt/dist/chrome-mv3
+npm run build:firefox   # 构建 Firefox MV2 产物 -> wxt/dist/firefox-mv2
+npm run zip             # 打包生成商店上传 Zip
 ```
 
-构建产物存放于 `wxt/dist` 中且**不会**提交到 Git 仓库 — 发布版本会打包上传至应用商店及 GitHub Releases。
+---
 
-加载未打包的开发构建：先运行 `npm run build`，然后在 Chrome 中打开 `chrome://extensions`，开启“开发者模式”，选择“加载已解压的扩展程序”，选择 `wxt/dist/chrome-mv3` 目录即可。
+## 🌐 Cloudflare Pages 部署教程 (Cloudflare Pages Deployment Guide)
 
-### 遗留代码
+本项目提供完整的静态官网与卸载意见反馈站点源码（位于根目录 `site/`），可无缝部署至 Cloudflare Pages：
 
-WXT 重构之前的旧版本使用了手写的 `chrome/` 和 `firefox/` 源码树并提交了编译产物。该部分代码已从主分支中移除，并保留在 [`legacy`](https://github.com/spin311/MicrosoftRewardsWebsite/tree/legacy) 分支中。主分支上的任何代码均不依赖它。
+### 部署步骤
+1. 将 GitHub 仓库 `3y3y3y-huaiji/MicrosoftRewardsWebsite` Fork 或关联至您的 GitHub 账号。
+2. 登录 [Cloudflare Dashboard](https://dash.cloudflare.com/)，在左侧导航栏选择 **Workers & Pages** -> **Create application** -> **Pages** -> **Connect to Git**。
+3. 选择 GitHub 仓库 `3y3y3y-huaiji/MicrosoftRewardsWebsite`。
+4. 设置构建参数：
+   - **Framework preset**: `None`
+   - **Build command**: (留空无需编译)
+   - **Build output directory**: `site`
+5. 点击 **Save and Deploy**，部署完成后 Cloudflare Pages 将自动分配如 `mr-autosearch.pages.dev` 的访问域名。
+6. 站点包含：
+   - 官方主页与功能介绍：`site/index.html`
+   - 卸载反馈收集页面：`site/uninstall.html`
+   - Wrangler 部署配置：`site/wrangler.json`
 
-## 联系方式
+---
 
-如果您有任何建议或疑问，欢迎通过邮件联系我：[spin311pro@gmail.com](mailto:spin311pro@gmail.com)。
+## ❓ 常见问题 (FAQ)
 
-祝您愉快获取积分！😊
+**Q: 使用自动搜索助手会被微软 Rewards 判定为违规吗？**  
+A: 本扩展内置智能随机延迟机制（如每次搜索随机间隔 3~6 秒，留存 2 秒后关闭），高度模拟真实用户的浏览行为。建议搭配合理的分散搜索策略，避免设置过于激进的 0 秒刷新。
+
+**Q: 为什么搜索没有增加积分？**  
+A: 1. 请确认您已在 Edge/Bing 中登录了微软账号；  
+2. 微软 Rewards 每日有搜索冷却限制或积分上限；  
+3. 检查扩展设置中的搜索次数是否符合您当前账户等级（Level 1 每日最高 30 分，Level 2 最高 90 分 PC + 60 分 移动端）。
+
+**Q: 插件是完全免费且开源的吗？**  
+A: 是的，本项目 100% 开源，采用 Apache License 2.0 协议，无任何隐藏收费或商业广告。
+
+---
+
+## 📄 开源协议 (License)
+
+本项目基于 **Apache License Version 2.0** 协议开源发布。  
+版权所有 Copyright 2026 **3y3y3y-huaiji**。
+
+完整协议内容请参阅 [LICENSE](LICENSE) 文件。

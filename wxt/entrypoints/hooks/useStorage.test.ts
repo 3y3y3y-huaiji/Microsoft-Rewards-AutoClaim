@@ -2,7 +2,7 @@
 // Storage helpers need no DOM. Running under node avoids the esbuild/jsdom
 // TextEncoder invariant clash that WXT's `#imports` transform triggers in jsdom.
 import { describe, it, expect, beforeEach } from 'vitest';
-import { fakeBrowser } from 'wxt/testing';
+import { fakeBrowser } from 'wxt/testing/fake-browser';
 import {
   getStorageItem,
   setStorageItem,

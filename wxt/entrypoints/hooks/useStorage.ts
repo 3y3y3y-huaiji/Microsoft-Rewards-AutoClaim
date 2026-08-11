@@ -51,7 +51,9 @@ export async function getStorageItems<T = unknown>(keys: string[], storageType: 
     const items = await storage.getItems(storageKeys);
     return items.reduce((acc: Record<string, T>, item: StorageItem) => {
         const shortKey = item.key.split(":")[1];
-        acc[shortKey] = item.value as T;
+        if (shortKey) {
+            acc[shortKey] = item.value as T;
+        }
         return acc;
     }, {});
 }

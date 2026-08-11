@@ -12,7 +12,7 @@ export function toInt(value: unknown, fallback: number): number {
 }
 
 function pick<T>(arr: T[]): T {
-    return arr[getRndInteger(0, arr.length - 1)];
+    return arr[getRndInteger(0, arr.length - 1)]!;
 }
 
 // Build a natural-looking search query from real words — "<lead-in> <topic>" or

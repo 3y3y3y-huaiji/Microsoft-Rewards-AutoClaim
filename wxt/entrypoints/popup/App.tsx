@@ -9,6 +9,7 @@ import NumberInput from '@/entrypoints/components/NumberInput';
 import AccountLevelSelect from '@/entrypoints/components/AccountLevelSelect';
 import ManualClaimButton from '@/entrypoints/components/ManualClaimButton';
 import SearchProgressBar from '@/entrypoints/components/SearchProgressBar';
+import { siteConfig } from '@/entrypoints/config/siteConfig';
 
 function App() {
     const [active, setActive] = useStorage<boolean>('active', DEFAULTS.active, StorageValues.SYNC);
@@ -41,11 +42,11 @@ function App() {
 
     return (
         <>
-            <h3 className="container-fluid text-center mt-2 heading">微软 Rewards 自动搜索器</h3>
+            <h3 className="container-fluid text-center mt-2 heading">微软 Rewards 自动搜索助手</h3>
             <div className="container-fluid text-center my-2">
-                <a href="https://svitspindler.com/microsoft-automatic-rewards" className="float-start links" target="_blank" rel="noopener noreferrer">帮助</a>
-                <a href="https://svitspindler.com/microsoft-automatic-rewards/mobile/test-app" className="float-start links" target="_blank" rel="noopener noreferrer">移动端</a>
-                <a className="links" href="https://svitspindler.com/contact" target="_blank" rel="noopener noreferrer" id="contact">联系我</a>
+                <a href={siteConfig.helpUrl} className="float-start links" target="_blank" rel="noopener noreferrer">帮助</a>
+                <a href={siteConfig.officialWebsite} className="float-start links" target="_blank" rel="noopener noreferrer">官网</a>
+                <a className="links" href={siteConfig.contactUrl} target="_blank" rel="noopener noreferrer" id="contact">联系我</a>
             </div>
 
             <div className="text-center">
@@ -69,29 +70,6 @@ function App() {
                         <label htmlFor="openFirstResult">打开搜索结果中的首条链接</label>
                         <span className="tooltip-icon info" data-tooltip="在每个打开的搜索标签页中，在短暂随机延迟后跳转至首个搜索结果">ℹ</span>
                     </div>
-                </div>
-
-                <div className="left-align small-title">
-                    <div className="ml-2">免费游戏领取扩展：</div>
-                    <ul className="earn-list">
-                        <li>
-                            <a href="https://chromewebstore.google.com/detail/free-game-claimer-for-ste/mndghaafpgiinfecbbbcppppiblmjepk" className="normal-link" target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', width: '100%', height: '100%' }}>
-                                <img src="/imgs/free-games.png" alt="免费游戏" className="earn-logo" />
-                                Steam & Epic 免费游戏自动领取器
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-                <div className="left-align ml-2 small-title">赚取更多积分的移动端应用：</div>
-                <div className="website-header">
-                    <div className="qr-code-with-text">
-                        <img src="/imgs/svgs/qr-code-app.svg" alt="二维码" className="qr-code" />
-                        <span className="website-phone-text">使用手机扫码</span>
-                    </div>
-                    <a href="https://play.google.com/store/apps/details?id=com.spin311.microsoft_automatic_rewards" className="website-phone normal-link no-underline try-mobile" target="_blank" rel="noopener noreferrer">
-                        <img className="website-phone-image" src="/imgs/mar-phone.png" alt="微软 Rewards 自动搜索器手机 App" />
-                        <div className="normal-color">下载应用</div>
-                    </a>
                 </div>
 
                 <div className="inputs">
@@ -118,12 +96,12 @@ function App() {
 
             <div className="container-fluid text-center footer-links">
                 <span>
-                    <a href="https://github.com/spin311/MicrosoftRewardsWebsite" className="float-start links" target="_blank" rel="noopener noreferrer">GitHub</a>
+                    <a href={siteConfig.githubRepo} className="float-start links" target="_blank" rel="noopener noreferrer">GitHub</a>
                     <img src="/imgs/github.png" alt="GitHub 标志" />
                 </span>
-                <a className="links" href="https://rewards.bing.com/" target="_blank" rel="noopener noreferrer" id="rewardsLink">Rewards 页面</a>
+                <a className="links" href={siteConfig.rewardsDashboard} target="_blank" rel="noopener noreferrer" id="rewardsLink">Rewards 页面</a>
                 <span className="float-end" style={{ display: 'flex', alignItems: 'center' }}>
-                    <a href="https://svitspindler.com/donate" className="links" target="_blank" rel="noopener noreferrer" id="donateText" onMouseOver={() => setDonateHover(true)}>赞助</a>
+                    <a href={siteConfig.sponsorUrl} className="links" target="_blank" rel="noopener noreferrer" id="donateText" onMouseOver={() => setDonateHover(true)}>赞助</a>
                     <img src="/imgs/justAGirlSmol.png" alt="小猫" id="donateImg" style={{ visibility: donateHover ? 'visible' : 'hidden' }} />
                 </span>
             </div>

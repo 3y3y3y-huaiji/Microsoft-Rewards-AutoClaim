@@ -2,7 +2,7 @@
 // Background search runner needs no DOM; node avoids the esbuild/jsdom clash
 // that WXT's `#imports` transform triggers (same reason as useStorage.test.ts).
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { fakeBrowser } from 'wxt/testing';
+import { fakeBrowser } from 'wxt/testing/fake-browser';
 import { handleAlarmStep, startSearches, stopSearches } from './searchRunner';
 import { getStorageItem, setStorageItems } from '@/entrypoints/hooks/useStorage';
 import { StorageValues } from '@/entrypoints/enums/storageValues';
