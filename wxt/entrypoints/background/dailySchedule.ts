@@ -52,7 +52,7 @@ export async function handleInstallOrUpdate(details: { reason: string }): Promis
         );
         setTimeout(() => { browser.tabs.create({ url: WEBSITE_URL, active: true }); }, 1000);
     } else if (details.reason === 'update') {
-        setBadgeText('New');
+        setBadgeText('新');
     }
 }
 

@@ -13,7 +13,7 @@ function SearchProgressBar({ completed, total, isSearching }: SearchProgressBarP
     const { completed: done, total: goal, percent } = toSearchProgress(completed, total);
     const isComplete = done >= goal;
     const state = isSearching ? 'running' : isComplete ? 'done' : 'idle';
-    const label = isSearching ? 'Searching…' : isComplete ? 'All searches done' : 'Searches stopped';
+    const label = isSearching ? '正在搜索中…' : isComplete ? '已完成所有搜索' : '搜索已停止';
 
     return (
         <div className="progress-card" role="status" aria-live="polite">
@@ -32,7 +32,7 @@ function SearchProgressBar({ completed, total, isSearching }: SearchProgressBarP
                 aria-valuenow={done}
                 aria-valuemin={0}
                 aria-valuemax={goal}
-                aria-label={`${done} of ${goal} daily searches done`}
+                aria-label={`已完成 ${goal} 次每日搜索中的 ${done} 次`}
             >
                 <div className="progress-fill" style={{ width: `${percent}%` }} />
             </div>

@@ -1,3 +1,3 @@
-Automatic Microsoft rewards. Need to be logged in with microsoft rewards to work: https://www.microsoft.com//rewards 
+微软 Rewards 自动搜索器。必须登录微软 Rewards 账号才能正常工作：https://www.microsoft.com//rewards
 
-You can either click button to open 10 tabs to get the rewards, or you can check checkbox and tabs will open and close automatically every day when you open chrome. Extension gives you 30 microsoft points every day. Points can be redeemed for different game currency or donated to charity.
+你可以点击按钮打开 10 个标签页来获取奖励，也可以勾选复选框，这样在每天打开 Chrome 浏览器时，标签页就会自动打开并关闭。该扩展程序每天为你获取 30 个微软积分。积分可兑换各种游戏货币或捐赠给慈善机构。

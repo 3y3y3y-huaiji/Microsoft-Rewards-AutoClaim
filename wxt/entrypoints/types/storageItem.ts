@@ -1,4 +1,4 @@
-export type StorageItem = {
+export type StorageItem<T = unknown> = {
     key: string;
-    value: any;
-}
+    value: T;
+};

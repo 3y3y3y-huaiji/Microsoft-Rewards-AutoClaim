@@ -1,7 +1,7 @@
-import {useState, useEffect} from "react";
-import {StorageValues} from "@/entrypoints/enums/storageValues.ts"
+import { useState, useEffect } from "react";
+import { StorageValues } from "@/entrypoints/enums/storageValues";
 import { storage } from '#imports';
-import {StorageItem} from "@/entrypoints/types/storageItem.ts";
+import { StorageItem } from "@/entrypoints/types/storageItem";
 
 // Matches WXT's branded storage-key type. StorageValues values are exactly
 // local/session/sync/managed, so the runtime string always satisfies this shape.
@@ -13,7 +13,7 @@ export function useStorage<T>(key: string, defaultValue: T, storageType: Storage
     const [isInitialized, setIsInitialized] = useState(false);
 
     useEffect(() => {
-        storage.getItem(storageKey).then((stored: any) => {
+        storage.getItem<T>(storageKey).then((stored) => {
             setValue(stored ?? defaultValue);
             setIsInitialized(true);
         });
@@ -28,17 +28,17 @@ export function useStorage<T>(key: string, defaultValue: T, storageType: Storage
     return [value, setValue] as const;
 }
 
-export async function getStorageItem<T = any>(key: string, storageType: StorageValues = StorageValues.LOCAL): Promise<T | null> {
+export async function getStorageItem<T = unknown>(key: string, storageType: StorageValues = StorageValues.LOCAL): Promise<T | null> {
     const storageKey = `${storageType}:${key}` as StorageItemKey;
     return await storage.getItem<T>(storageKey);
 }
 
-export async function setStorageItem(key: string, value: any, storageType: StorageValues = StorageValues.LOCAL) {
+export async function setStorageItem<T = unknown>(key: string, value: T, storageType: StorageValues = StorageValues.LOCAL) {
     const storageKey = `${storageType}:${key}` as StorageItemKey;
     await storage.setItem(storageKey, value);
 }
 
-export async function setStorageItems(items: Record<string, any>, storageType: StorageValues = StorageValues.LOCAL) {
+export async function setStorageItems(items: Record<string, unknown>, storageType: StorageValues = StorageValues.LOCAL) {
     const storageItems = Object.entries(items).map(([key, value]) => ({
         key: `${storageType}:${key}` as StorageItemKey,
         value
@@ -46,12 +46,12 @@ export async function setStorageItems(items: Record<string, any>, storageType: S
     await storage.setItems(storageItems);
 }
 
-export async function getStorageItems(keys: string[], storageType: StorageValues = StorageValues.LOCAL) {
+export async function getStorageItems<T = unknown>(keys: string[], storageType: StorageValues = StorageValues.LOCAL): Promise<Record<string, T>> {
     const storageKeys: StorageItemKey[] = keys.map((key: string) => `${storageType}:${key}` as StorageItemKey);
     const items = await storage.getItems(storageKeys);
-    return items.reduce((acc: { [x: string]: any; }, item: StorageItem) => {
+    return items.reduce((acc: Record<string, T>, item: StorageItem) => {
         const shortKey = item.key.split(":")[1];
-        acc[shortKey] = item.value;
+        acc[shortKey] = item.value as T;
         return acc;
     }, {});
 }
@@ -77,7 +77,7 @@ export async function mergeIntoStorageItem<T>(
     } else if (typeof existingValue === 'string') {
         updatedValue = existingValue + String(newValue);
     } else if (typeof existingValue === 'number') {
-        updatedValue = (existingValue as number) + (newValue as any);
+        updatedValue = existingValue + (typeof newValue === 'number' ? newValue : Number(newValue));
     } else {
         throw new Error('mergeIntoStorageItem: Unsupported data type for appending.');
     }

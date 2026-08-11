@@ -26,7 +26,7 @@ describe('buildSearchQuery', () => {
       const q = buildSearchQuery();
       // Real words separated by single spaces, starting with a letter/digit —
       // never a lone random character or gibberish string.
-      expect(q).toMatch(/^[a-z0-9]+( [a-z0-9]+)+$/);
+      expect(q).toMatch(/^[\p{L}\p{N}]+( [\p{L}\p{N}]+)+$/u);
       for (const token of q.split(' ')) {
         expect(VOCAB.has(token)).toBe(true);
       }

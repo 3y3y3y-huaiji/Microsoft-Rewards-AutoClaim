@@ -1,109 +1,101 @@
-# Search automatic rewards
+# 微软 Rewards 自动搜索器
 
 ![banner](docs/images/banner.png)
 
-Get the most out of your Microsoft rewards account and earn points every day!
+充分利用你的微软 Rewards 账号，每天轻松获取积分！
 
-If you like the extension, please give it a star on GitHub! <img src="docs/images/github-star.png" alt="icon" height="32">
+如果你喜欢这个扩展，请在 GitHub 上为它点个 Star！ <img src="docs/images/github-star.png" alt="icon" height="32">
 
-## Download
+## 下载
 
-[Google Chrome Store](https://chromewebstore.google.com/detail/microsoft-automatic-rewar/ocmmbfdhomnkljmjkmafegefcgcfkefo)  
+[Chrome 应用商店](https://chromewebstore.google.com/detail/microsoft-automatic-rewar/ocmmbfdhomnkljmjkmafegefcgcfkefo)  
 
-[Firefox Store](https://addons.mozilla.org/en-US/firefox/addon/microsoft-automatic-rewards/)
+[Firefox 附加组件商店](https://addons.mozilla.org/en-US/firefox/addon/microsoft-automatic-rewards/)
 
-[Mobile app](https://github.com/spin311/MicrosoftRewardsWebsite/releases/tag/app)
+[移动端 App](https://github.com/spin311/MicrosoftRewardsWebsite/releases/tag/app)
 
-  If you enjoy the extension, 5-star rating would mean a lot:) <img src="docs/images/stars5.jpeg" alt="5 Stars" height="16">
+如果你喜欢这个扩展，请给予 5 星好评，这对我很重要 :) <img src="docs/images/stars5.jpeg" alt="5 Stars" height="16">
 
-## Donate <img src="docs/images/justAGirl.png" alt="Cat" height="64">
+## 赞助 <img src="docs/images/justAGirl.png" alt="Cat" height="64">
 
-Donations help me make tools like this for free in my spare time. Any amount helps! ❤️
+您的赞助能帮助我在业余时间继续免费开发此类工具。任何金额都是巨大的支持！❤️
 
 [![Donate with PayPal button](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/donate/?hosted_button_id=4WXEWMN3QGLGY)
 
 
 
-## Features
+## 功能特点
 
 ![Popup Screenshot](docs/images/help3.png)
 
-1. Open 10 random tabs in Bing and close them once they are loaded.
-2. Automatically open tabs every day when the browser is opened (turned on by default).
-3. Choose duration between tabs opening in seconds (choose 0 to open all tabs at the same time).
-4. Number of searches
-5. Time in seconds before tab gets closed (choose 0 to close when loaded)
-6. GitHub page with code and documentation
-7. Visit the Microsoft Rewards site and log in.
-8. [Donate with PayPal or any credit card](https://www.paypal.com/donate/?hosted_button_id=4WXEWMN3QGLGY).
+1. 在 Bing 中自动打开 10 个随机搜索标签页，加载完成后自动关闭。
+2. 每天首次打开浏览器时自动打开搜索标签页（默认开启）。
+3. 可自定义标签页打开的间隔时间（单位：秒；设置为 0 则同时打开所有标签页）。
+4. 可自定义搜索次数。
+5. 可自定义标签页关闭前的等待时间（单位：秒；设置为 0 则加载完即关闭）。
+6. GitHub 页面包含完整源代码和文档。
+7. 快速访问微软 Rewards 官方页面并登录。
+8. [使用 PayPal 或信用卡进行赞助](https://www.paypal.com/donate/?hosted_button_id=4WXEWMN3QGLGY)。
 
 <img src="docs/images/pin.png" alt="Pin extension" height="64">
 
-Make sure to pin the extension.
+请确保已将扩展程序固定到浏览器工具栏。
 
-## Project structure
+## 项目结构
 
-The browser extension is built with [WXT](https://wxt.dev/) and React. One
-codebase produces both the Chrome (MV3) and Firefox (MV2) builds — there is no
-longer a separate source tree per browser.
+本浏览器扩展基于 [WXT](https://wxt.dev/) 和 React 构建。一套代码库同时生成 Chrome (MV3) 和 Firefox (MV2) 构建版本 — 不再为不同浏览器维护独立的源码树。
 
 ```
-/wxt                        - Browser extension (WXT + React + TypeScript)
+/wxt                        - 浏览器扩展源码 (WXT + React + TypeScript)
   /entrypoints
-    background.ts           - Background service worker entry
-    /background             - Daily rewards, scheduling, search runner
-    rewards.content.ts      - Content script on rewards.bing.com
-    bingResult.content.ts   - Content script on Bing search results
-    /popup                  - Popup UI (React)
-    /components             - Shared React components
-    /hooks                  - React hooks (storage, search progress)
-    /utils                  - Search, progress, settings, helpers
-    /data                   - Search term pool
-    /enums, /types          - Shared TypeScript definitions
-  /public                   - Static assets copied into the build (icons)
-  wxt.config.ts             - Manifest and build configuration
-/microsoft_rewards_app      - Android app (Flutter)
-/assets                     - Source icon artwork (icon.svg)
-/scripts                    - Maintenance scripts (icon rasterization)
-/docs                       - Documentation and README images
+    background.ts           - 后台 Service Worker 入口
+    /background             - 每日奖励、调度计划、搜索运行器
+    rewards.content.ts      - rewards.bing.com 内容脚本
+    bingResult.content.ts   - Bing 搜索结果页内容脚本
+    /popup                  - 弹窗界面 (React)
+    /components             - 共享 React 组件
+    /hooks                  - React Hooks (存储管理、搜索进度)
+    /utils                  - 搜索、进度、设置及辅助函数
+    /data                   - 搜索词库
+    /enums, /types          - 共享 TypeScript 类型定义
+  /public                   - 复制到构建产物中的静态资源 (图标)
+  wxt.config.ts             - Manifest 配置与构建配置
+/microsoft_rewards_app      - Android 应用 (Flutter)
+/assets                     - 图标源文件 (icon.svg)
+/scripts                    - 维护脚本 (图标栅格化处理)
+/docs                       - 文档与 README 图片
 ```
 
-## Development
+## 开发指南
 
-All extension commands run from the `wxt` directory:
+所有扩展相关的命令均在 `wxt` 目录下运行：
 
 ```bash
 cd wxt
 npm install
 
-npm run dev              # Chrome, hot reload
-npm run dev:firefox      # Firefox, hot reload
+npm run dev              # Chrome 模式开发，支持热重载
+npm run dev:firefox      # Firefox 模式开发，支持热重载
 
-npm run compile          # TypeScript typecheck
-npm run test             # Unit tests (Vitest)
+npm run compile          # TypeScript 类型检查
+npm run test             # 单元测试 (Vitest)
 
-npm run build            # Production build -> wxt/dist/chrome-mv3
-npm run build:firefox    # Production build -> wxt/dist/firefox-mv2
-npm run zip              # Packaged zip for store upload
+npm run build            # 生产环境构建 -> wxt/dist/chrome-mv3
+npm run build:firefox    # 生产环境构建 -> wxt/dist/firefox-mv2
+npm run zip              # 打包 Zip 文件供商店上传
 npm run zip:firefox
 ```
 
-Build output lives in `wxt/dist` and is **not** committed — releases are
-published to the web stores and to GitHub Releases.
+构建产物存放于 `wxt/dist` 中且**不会**提交到 Git 仓库 — 发布版本会打包上传至应用商店及 GitHub Releases。
 
-To load an unpacked development build: run `npm run build`, then in Chrome open
-`chrome://extensions`, enable Developer mode, and "Load unpacked" from
-`wxt/dist/chrome-mv3`.
+加载未打包的开发构建：先运行 `npm run build`，然后在 Chrome 中打开 `chrome://extensions`，开启“开发者模式”，选择“加载已解压的扩展程序”，选择 `wxt/dist/chrome-mv3` 目录即可。
 
-### Legacy code
+### 遗留代码
 
-Versions before the WXT rewrite used hand-written `chrome/` and `firefox/`
-source trees with committed compiled output. That code has been removed from
-the default branch and preserved on the [`legacy`](https://github.com/spin311/MicrosoftRewardsWebsite/tree/legacy)
-branch. Nothing on the default branch depends on it.
+WXT 重构之前的旧版本使用了手写的 `chrome/` 和 `firefox/` 源码树并提交了编译产物。该部分代码已从主分支中移除，并保留在 [`legacy`](https://github.com/spin311/MicrosoftRewardsWebsite/tree/legacy) 分支中。主分支上的任何代码均不依赖它。
 
-## Contact
+## 联系方式
 
-If you have any suggestions or questions, you can contact me at [spin311pro@gmail.com](mailto:spin311pro@gmail.com).
+如果您有任何建议或疑问，欢迎通过邮件联系我：[spin311pro@gmail.com](mailto:spin311pro@gmail.com)。
 
-Enjoy your rewards! 😊
+祝您愉快获取积分！😊

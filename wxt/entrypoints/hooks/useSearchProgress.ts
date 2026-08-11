@@ -34,7 +34,7 @@ export function useSearchProgress(): SearchProgressState {
             if (!isMounted) return;
             setState({
                 isLoaded: true,
-                isSearching: s.isSearching ?? false,
+                isSearching: Boolean(s.isSearching),
                 completed: toInt(s.currentSearch, 0),
                 total: toInt(s.searches, DEFAULTS.searches),
             });
