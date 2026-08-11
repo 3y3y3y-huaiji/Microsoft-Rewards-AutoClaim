@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { StorageValues } from "@/entrypoints/enums/storageValues";
 import { storage } from '#imports';
-import { StorageItem } from "@/entrypoints/types/storageItem";
+import type { StorageItem } from "@/entrypoints/types/storageItem";
 
 // Matches WXT's branded storage-key type. StorageValues values are exactly
 // local/session/sync/managed, so the runtime string always satisfies this shape.

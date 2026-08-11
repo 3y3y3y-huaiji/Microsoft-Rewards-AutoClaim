@@ -5,9 +5,9 @@ export default defineConfig({
   modules: ['@wxt-dev/module-react'],
   alias: { '@': '.' },
   manifest: {
-    name: '微软 Rewards 自动搜索器',
+    name: '微软 Rewards 自动搜索器 (稳定版)',
     description:
-      '自动或一键获取每日最高微软 Rewards 积分的浏览器扩展。',
+      '【稳定版-WXT 0.20.6】自动或一键获取每日最高微软 Rewards 积分的浏览器扩展。',
     permissions: ['storage', 'alarms'],
     icons: { 16: 'imgs/logo.png', 32: 'imgs/logo2.png', 48: 'imgs/logo2.png', 128: 'imgs/logo3.png' },
     action: {
