@@ -1,6 +1,6 @@
 # 微软 Rewards 自动搜索助手 (Microsoft Rewards AutoSearch)
 
-[![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
+[![License: CC BY 4.0](https://img.shields.io/badge/原创内容协议-CC_BY_4.0-lightgrey.svg)](https://creativecommons.org/licenses/by/4.0/)
 [![Framework: WXT](https://img.shields.io/badge/Framework-WXT-green.svg)](https://github.com/wxt-dev/wxt)
 [![Language: TypeScript](https://img.shields.io/badge/Language-TypeScript-blue.svg)](https://github.com/microsoft/TypeScript)
 [![Tests: 39 Passed](https://img.shields.io/badge/Tests-39%20Passed-brightgreen.svg)]()
@@ -115,9 +115,12 @@ A: 是的，本项目 100% 开源，采用 Apache License 2.0 协议，无任何
 
 ---
 
-## 📄 开源协议 (License)
+## 📄 版权与协议说明 (Copyright & License)
 
-本项目基于 **Apache License Version 2.0** 协议开源发布。  
-版权所有 Copyright 2026 **3y3y3y-huaiji**。
+本项目为 [spin311/MicrosoftRewardsWebsite](https://github.com/spin311/MicrosoftRewardsWebsite) 的 Fork 版本。
 
-完整协议内容请参阅 [LICENSE](LICENSE) 文件。
+**原项目目前未设置开源协议，其代码版权归原作者 [spin311](https://github.com/spin311) 所有。**
+
+本仓库新增的原创内容（包括汉化文本、中文文档、注释等）以 [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) 协议共享。
+
+> 如需使用本仓库中来自上游的代码，请直接联系原作者 spin311 确认授权。
