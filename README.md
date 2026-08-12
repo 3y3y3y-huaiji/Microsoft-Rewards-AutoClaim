@@ -9,7 +9,7 @@
 
 **微软 Rewards 自动搜索助手 (Microsoft Rewards AutoSearch)** 是一款 100% 纯净无广告、完全开源的 Microsoft Rewards 自动化搜索工具。基于现代化的 WXT 框架与 React + TypeScript 构建，旨在帮助广大微软 Rewards 用户安全、高效、自动化地获取每日 Bing 搜索积分。
 
-本项目已全面清理所有第三方推广广告与恶意外链，采用 100% GitHub 原生集成与开放透明的 Apache License 2.0 开源协议发布，工程轻量纯粹。
+本项目基于 [spin311/MicrosoftRewardsWebsite](https://github.com/spin311/MicrosoftRewardsWebsite) Fork 而来，采用 100% GitHub 原生集成，在原版基础上进行了全面汉化与工程整理，工程轻量纯粹。
 
 ---
 
