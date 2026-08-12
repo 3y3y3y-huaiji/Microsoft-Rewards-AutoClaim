@@ -93,6 +93,29 @@ A: 是的，本项目 100% 开源，采用 Apache License 2.0 协议，无任何
 
 ---
 
+## 🤖 AI 辅助声明 (AI Assistance Declaration)
+
+本项目的部分代码、文档及注释内容借助 **AI 辅助工具**（包括 Google Antigravity / Gemini）生成或优化。所有 AI 生成内容均经过人工审查、测试与修改，以确保其正确性与安全性。
+
+本声明遵循开源社区对 AI 辅助开发的透明度建议，旨在向用户和贡献者如实披露开发方式。
+
+> This project's code, documentation, and comments were partially generated or refined with the assistance of AI tools (including Google Antigravity / Gemini). All AI-generated content has been manually reviewed, tested, and modified to ensure correctness and safety.
+
+---
+
+## 🍴 Fork 声明 (Fork Declaration)
+
+本项目 Fork 自原始上游仓库，并在其基础上进行了以下改进：
+
+- 🌐 **全面汉化**：将界面、文档及注释翻译为简体中文，以服务中文用户群体。
+- 🧹 **代码清理**：移除原项目中的全部第三方推广广告、恶意外链及商业私货内容。
+- ⚙️ **功能优化**：对部分核心逻辑进行重构和性能改进。
+- 📦 **工程整理**：重新组织项目结构，补充完善测试套件与构建流程。
+
+本 Fork 版本依据 **Apache License 2.0** 协议发布，完整保留原始版权信息与许可声明。感谢原作者的开源贡献。
+
+---
+
 ## 📄 开源协议 (License)
 
 本项目基于 **Apache License Version 2.0** 协议开源发布。  
