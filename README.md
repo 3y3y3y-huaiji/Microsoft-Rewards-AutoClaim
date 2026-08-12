@@ -1,15 +1,15 @@
 # 微软 Rewards 自动搜索助手 (Microsoft Rewards AutoSearch)
 
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
-[![Framework: WXT](https://img.shields.io/badge/Framework-WXT-green.svg)](https://wxt.dev/)
-[![Language: TypeScript](https://img.shields.io/badge/Language-TypeScript-blue.svg)](https://www.typescriptlang.org/)
-[![Tests: 37 Passed](https://img.shields.io/badge/Tests-37%20Passed-brightgreen.svg)]()
+[![Framework: WXT](https://img.shields.io/badge/Framework-WXT-green.svg)](https://github.com/wxt-dev/wxt)
+[![Language: TypeScript](https://img.shields.io/badge/Language-TypeScript-blue.svg)](https://github.com/microsoft/TypeScript)
+[![Tests: 39 Passed](https://img.shields.io/badge/Tests-39%20Passed-brightgreen.svg)]()
 
 ## 📖 项目简介 (Overview)
 
-**微软 Rewards 自动搜索助手 (Microsoft Rewards AutoSearch)** 是一款 100% 纯净无广告、完全开源的 Microsoft Rewards 自动化搜索工具。基于现代化的 [WXT](https://wxt.dev/) 框架与 React + TypeScript 构建，旨在帮助广大微软 Rewards 用户安全、高效、自动化地获取每日 Bing 搜索积分。
+**微软 Rewards 自动搜索助手 (Microsoft Rewards AutoSearch)** 是一款 100% 纯净无广告、完全开源的 Microsoft Rewards 自动化搜索工具。基于现代化的 WXT 框架与 React + TypeScript 构建，旨在帮助广大微软 Rewards 用户安全、高效、自动化地获取每日 Bing 搜索积分。
 
-本项目已全面清理所有第三方推广广告与恶意外链，并采用开放透明的 Apache License 2.0 开源协议发布，代码库完全解耦，支持一键部署官方静态站点至 Cloudflare Pages。
+本项目已全面清理所有第三方推广广告与恶意外链，采用 100% GitHub 原生集成与开放透明的 Apache License 2.0 开源协议发布，工程轻量纯粹。
 
 ---
 
@@ -44,13 +44,13 @@
 
 ## 🛠️ 开发与测试指南 (Development & Testing)
 
-本扩展采用 TypeScript + React 开发，基于 WXT 现代化扩展构建工具，测试套件使用 Vitest。
+本项目采用 TypeScript + React 开发，基于 WXT 现代化扩展构建工具，测试套件使用 Vitest。
 
 ### 前置要求
 - Node.js >= 18.0.0
 - npm >= 9.0.0
 
-### 开发命令
+### 开发与构建命令
 ```bash
 # 进入扩展工程目录
 cd wxt
@@ -67,7 +67,7 @@ npm run dev:firefox
 # TypeScript 类型检查
 npm run compile
 
-# 运行 Vitest 单元测试套件 (包含 37+ 单元测试)
+# 运行 Vitest 单元测试套件 (包含 39 个单元测试)
 npm run test
 
 # 生产环境打包构建
@@ -75,26 +75,6 @@ npm run build           # 构建 Chrome MV3 产物 -> wxt/dist/chrome-mv3
 npm run build:firefox   # 构建 Firefox MV2 产物 -> wxt/dist/firefox-mv2
 npm run zip             # 打包生成商店上传 Zip
 ```
-
----
-
-## 🌐 Cloudflare Pages 部署教程 (Cloudflare Pages Deployment Guide)
-
-本项目提供完整的静态官网与卸载意见反馈站点源码（位于根目录 `site/`），可无缝部署至 Cloudflare Pages：
-
-### 部署步骤
-1. 将 GitHub 仓库 `3y3y3y-huaiji/MicrosoftRewardsWebsite` Fork 或关联至您的 GitHub 账号。
-2. 登录 [Cloudflare Dashboard](https://dash.cloudflare.com/)，在左侧导航栏选择 **Workers & Pages** -> **Create application** -> **Pages** -> **Connect to Git**。
-3. 选择 GitHub 仓库 `3y3y3y-huaiji/MicrosoftRewardsWebsite`。
-4. 设置构建参数：
-   - **Framework preset**: `None`
-   - **Build command**: (留空无需编译)
-   - **Build output directory**: `site`
-5. 点击 **Save and Deploy**，部署完成后 Cloudflare Pages 将自动分配如 `mr-autosearch.pages.dev` 的访问域名。
-6. 站点包含：
-   - 官方主页与功能介绍：`site/index.html`
-   - 卸载反馈收集页面：`site/uninstall.html`
-   - Wrangler 部署配置：`site/wrangler.json`
 
 ---
 
