@@ -10,6 +10,10 @@ export const DEFAULTS = {
     // When on, each search tab opens its first organic result after a short
     // random delay (without stealing focus); otherwise the tab just loads the SERP.
     openFirstResult: true,
+    // MV3 opt-in ad slot: default off, user must explicitly enable.
+    // Stored as sync:adsEnabled (see StorageValues.SYNC and docs/ads/ads-spec.md §4).
+    // AdBanner only renders when this is true; no remote JS is ever loaded.
+    adsEnabled: false,
 } as const;
 
 // Selecting an account level sets a sensible default number of daily searches

@@ -7,6 +7,7 @@ import { DEFAULTS, LEVEL_SEARCHES } from '@/entrypoints/utils/settings';
 import { clearBadge } from '@/entrypoints/utils/browserAction';
 import NumberInput from '@/entrypoints/components/NumberInput';
 import AccountLevelSelect from '@/entrypoints/components/AccountLevelSelect';
+import AdBanner from '@/entrypoints/components/AdBanner';
 import ManualClaimButton from '@/entrypoints/components/ManualClaimButton';
 import SearchProgressBar from '@/entrypoints/components/SearchProgressBar';
 import { siteConfig } from '@/entrypoints/config/siteConfig';
@@ -19,6 +20,7 @@ function App() {
     const [closeTime, setCloseTime] = useStorage<number>('closeTime', DEFAULTS.closeTime, StorageValues.SYNC);
     const [accountLevel, setAccountLevel] = useStorage<string>('accountLevel', DEFAULTS.accountLevel, StorageValues.SYNC);
     const [openFirstResult, setOpenFirstResult] = useStorage<boolean>('openFirstResult', DEFAULTS.openFirstResult, StorageValues.SYNC);
+    const [adsEnabled, setAdsEnabled] = useStorage<boolean>('adsEnabled', DEFAULTS.adsEnabled, StorageValues.SYNC);
     const [donateHover, setDonateHover] = useState(false);
     const { isLoaded, isSearching, completed, total } = useSearchProgress();
 
@@ -105,6 +107,8 @@ function App() {
                     <img src="/imgs/justAGirlSmol.png" alt="小猫" id="donateImg" style={{ visibility: donateHover ? 'visible' : 'hidden' }} />
                 </span>
             </div>
+
+            {adsEnabled && <AdBanner onClose={() => setAdsEnabled(false)} />}
         </>
     );
 }
