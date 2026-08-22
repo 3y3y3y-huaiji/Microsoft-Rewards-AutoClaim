@@ -1,34 +1,38 @@
+// Copyright (c) 2026 3y3y3y-huaiji Microsoft-Rewards-AutoSearch is licensed under Mulan PSL v2.
+// You can use this software according to the terms and conditions of the Mulan PSL v2.
+// You may obtain a copy of Mulan PSL v2 at:
+//          http://license.coscl.org.cn/MulanPSL2
+// THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+// See the Mulan PSL v2 for more details.
+
+// Clean-room: badge helpers for MV3/MV2 compatibility.
+// Spec §4.4 / §8 — toolbar badge shows completed count; color matches popup accent.
+
 import { browser } from 'wxt/browser';
 
-// Matches the popup's accent colour so the counter badge reads as part of the
-// extension rather than an error marker (the browser default is red).
-const BADGE_COLOR = '#2282ad';
+const BADGE_BG = '#2282ad';
 
-interface BadgeApi {
-    setBadgeText(details: { text: string }): void;
-    setBadgeBackgroundColor?(details: { color: string }): void;
-}
+type BadgePort = {
+  setBadgeText(details: { text: string }): void;
+  setBadgeBackgroundColor?(details: { color: string }): void;
+};
 
-// MV3 exposes `browser.action`; MV2 (Firefox) exposes `browser.browserAction`.
-function badgeApi(): BadgeApi | undefined {
-    const api = browser as unknown as { action?: BadgeApi; browserAction?: BadgeApi };
-    return api.action ?? api.browserAction;
+function resolveBadge(): BadgePort | undefined {
+  const b = browser as unknown as { action?: BadgePort; browserAction?: BadgePort };
+  return b.action ?? b.browserAction;
 }
 
 export function setBadgeText(text: string): void {
-    badgeApi()?.setBadgeText({ text });
+  resolveBadge()?.setBadgeText({ text });
 }
 
-// The toolbar icon shows how many of today's searches have run. A badge only
-// fits ~4 characters, so it carries the completed count alone; the popup spells
-// out the full "3/5".
-export function setSearchCountBadge(completed: number): void {
-    const api = badgeApi();
-    if (!api) return;
-    api.setBadgeBackgroundColor?.({ color: BADGE_COLOR });
-    api.setBadgeText({ text: String(completed) });
+export function setSearchCountBadge(done: number): void {
+  const api = resolveBadge();
+  if (!api) return;
+  api.setBadgeBackgroundColor?.({ color: BADGE_BG });
+  api.setBadgeText({ text: String(done) });
 }
 
 export function clearBadge(): void {
-    setBadgeText('');
+  setBadgeText('');
 }

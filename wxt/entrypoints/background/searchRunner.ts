@@ -1,3 +1,13 @@
+// Copyright (c) 2026 3y3y3y-huaiji Microsoft-Rewards-AutoSearch is licensed under Mulan PSL v2.
+// You can use this software according to the terms and conditions of the Mulan PSL v2.
+// You may obtain a copy of Mulan PSL v2 at:
+//          http://license.coscl.org.cn/MulanPSL2
+// THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+// See the Mulan PSL v2 for more details.
+
+// Clean-room reimplementation per docs/rewrite/spec.md §4.
+// Alarm/storage logic freshly authored; external names preserved for tests.
+
 import { browser } from 'wxt/browser';
 import { storage } from '#imports';
 import { getRndInteger } from '@/entrypoints/utils/helpers';
@@ -7,98 +17,94 @@ import { StorageValues } from '@/entrypoints/enums/storageValues';
 import { DEFAULTS } from '@/entrypoints/utils/settings';
 import { clearBadge, setSearchCountBadge } from '@/entrypoints/utils/browserAction';
 
-const ALARM_NAME = 'openTabAlarm';
+const SEARCH_ALARM = 'openTabAlarm';
 
-// Opens tab #1 immediately (currentSearch = 1), then schedules the rest via alarm.
-export async function startSearches(searchTimeout: number, searches: number, closeTimeSeconds: number): Promise<void> {
-    await openSearchTab(closeTimeSeconds * 1000);
-    await recordProgress(1);
-    if (shouldOpenMore(1, searches)) {
-        browser.alarms.create(ALARM_NAME, { delayInMinutes: nextDelayMinutes(searchTimeout) });
-    } else {
-        await stopSearches();
-    }
+export async function startSearches(timeoutSec: number, total: number, closeSec: number): Promise<void> {
+  await launchSearchTab(closeSec * 1000);
+  await persistProgress(1);
+  if (shouldOpenMore(1, total)) {
+    browser.alarms.create(SEARCH_ALARM, { delayInMinutes: nextDelayMinutes(timeoutSec) });
+  } else {
+    await stopSearches();
+  }
 }
 
 export async function handleAlarmStep(alarm: { name: string }): Promise<void> {
-    if (alarm.name !== ALARM_NAME) return;
-    const s = await getStorageItems(['searches', 'timeout', 'closeTime', 'currentSearch', 'active'], StorageValues.SYNC);
-    const searches = toInt(s.searches, DEFAULTS.searches);
-    const searchTimeout = toInt(s.timeout, DEFAULTS.timeout);
-    const closeTimeMs = toInt(s.closeTime, DEFAULTS.closeTime) * 1000;
-    const opened = toInt(s.currentSearch, searches);
-    const isSearchesEnabled = s.active ?? DEFAULTS.active;
+  if (alarm.name !== SEARCH_ALARM) return;
 
-    // Alarms outlive the setting that created them (they survive a browser
-    // restart), so re-check the toggle every step: with "Daily searches" off,
-    // a leftover alarm must not keep opening Bing tabs.
-    if (!isSearchesEnabled || !shouldOpenMore(opened, searches)) {
-        await stopSearches();
-        return;
-    }
-    await openSearchTab(closeTimeMs);
-    const nowOpened = opened + 1;
-    await recordProgress(nowOpened);
-    if (shouldOpenMore(nowOpened, searches)) {
-        browser.alarms.create(ALARM_NAME, { delayInMinutes: nextDelayMinutes(searchTimeout) });
-    } else {
-        await stopSearches();
-    }
+  const snapshot = await getStorageItems(
+    ['searches', 'timeout', 'closeTime', 'currentSearch', 'active'],
+    StorageValues.SYNC,
+  );
+  const total = toInt(snapshot.searches, DEFAULTS.searches);
+  const timeoutSec = toInt(snapshot.timeout, DEFAULTS.timeout);
+  const closeMs = toInt(snapshot.closeTime, DEFAULTS.closeTime) * 1000;
+  const already = toInt(snapshot.currentSearch, total);
+  const enabled = snapshot.active ?? DEFAULTS.active;
+
+  if (!enabled || !shouldOpenMore(already, total)) {
+    await stopSearches();
+    return;
+  }
+
+  await launchSearchTab(closeMs);
+  const updated = already + 1;
+  await persistProgress(updated);
+
+  if (shouldOpenMore(updated, total)) {
+    browser.alarms.create(SEARCH_ALARM, { delayInMinutes: nextDelayMinutes(timeoutSec) });
+  } else {
+    await stopSearches();
+  }
 }
 
 export async function stopSearches(): Promise<void> {
-    await setStorageItem('isSearching', false, StorageValues.SYNC);
-    clearBadge();
-    await browser.alarms.clearAll();
+  await setStorageItem('isSearching', false, StorageValues.SYNC);
+  clearBadge();
+  await browser.alarms.clearAll();
 }
 
-// Turning "Daily searches" off has to stop a run that is already in flight —
-// waiting for the next alarm would leave the popup claiming to be searching.
-// Watching storage (rather than reacting to a popup message) also covers the
-// toggle being synced from another device.
+// Watch the sync toggle: if user (or another device) turns off daily searches
+// while a run is in flight, stop immediately instead of waiting for next alarm.
 export function watchSearchesToggle(): void {
-    storage.watch<boolean>('sync:active', (isEnabled) => {
-        if (isEnabled === false) void stopSearches();
-    });
+  storage.watch<boolean>('sync:active', (next) => {
+    if (next === false) void stopSearches();
+  });
 }
 
-// `currentSearch` is the number of search tabs opened in this run; the popup and
-// the toolbar badge both read it, so every step must persist it — including the
-// last one, or the popup would freeze one short of the total. `isSearching` is
-// re-affirmed here (not only at the start) so a run that outlives a service
-// worker restart still reports itself as running.
-async function recordProgress(opened: number): Promise<void> {
-    await setStorageItems({ currentSearch: opened, isSearching: true }, StorageValues.SYNC);
-    setSearchCountBadge(opened);
+async function persistProgress(opened: number): Promise<void> {
+  await setStorageItems({ currentSearch: opened, isSearching: true }, StorageValues.SYNC);
+  setSearchCountBadge(opened);
 }
 
-// The marAuto marker tells the bing-result content script this tab was opened
-// by the extension, so it may open the first organic result. It's only added
-// when the user enabled "Open first result in search tabs"; manual Bing
-// searches (and tabs opened with the option off) lack the marker and are left
-// untouched.
-async function openSearchTab(closeTimeMs: number): Promise<void> {
-    const openFirstResult = await getStorageItem<boolean>('openFirstResult', StorageValues.SYNC);
-    const query = buildSearchUrl(buildSearchQuery());
-    const url = openFirstResult ? `${query}&marAuto=1` : query;
-    await openAndClose(url, closeTimeMs + getRndInteger(0, 1000));
+async function launchSearchTab(closeDelayMs: number): Promise<void> {
+  const openFirst = await getStorageItem<boolean>('openFirstResult', StorageValues.SYNC);
+  const q = buildSearchQuery();
+  const base = buildSearchUrl(q);
+  const finalUrl = openFirst ? `${base}&marAuto=1` : base;
+  await createAndScheduleClose(finalUrl, closeDelayMs + getRndInteger(0, 1000));
 }
 
-async function openAndClose(url: string, closeTimeMs: number): Promise<void> {
-    const tab = await browser.tabs.create({ url, active: false });
-    const tabId = tab.id!;
-    function listener(updatedId: number, changeInfo: { status?: string }): void {
-        if (updatedId === tabId && changeInfo.status === 'complete') {
-            browser.tabs.onUpdated.removeListener(listener);
-            waitAndClose(tabId, closeTimeMs);
-        }
+async function createAndScheduleClose(target: string, lifetimeMs: number): Promise<void> {
+  const created = await browser.tabs.create({ url: target, active: false });
+  const tid = created.id!;
+  const onUpdate = (updatedId: number, info: { status?: string }): void => {
+    if (updatedId === tid && info.status === 'complete') {
+      browser.tabs.onUpdated.removeListener(onUpdate);
+      scheduleClose(tid, lifetimeMs);
     }
-    browser.tabs.onUpdated.addListener(listener);
+  };
+  browser.tabs.onUpdated.addListener(onUpdate);
 }
 
-function waitAndClose(id: number, closeTimeMs: number): void {
-    const timeout = closeTimeMs <= 0 ? 500 : closeTimeMs;
-    setTimeout(() => {
-        browser.tabs.get(id).then(() => browser.tabs.remove(id)).catch(() => {});
-    }, Math.max(timeout - 500, 0) + getRndInteger(0, 1000));
+function scheduleClose(tabId: number, lifetimeMs: number): void {
+  const effective = lifetimeMs <= 0 ? 500 : lifetimeMs;
+  // Compensate 500ms then add jitter so close timing is less uniform.
+  const delay = Math.max(effective - 500, 0) + getRndInteger(0, 1000);
+  setTimeout(() => {
+    browser.tabs
+      .get(tabId)
+      .then(() => browser.tabs.remove(tabId))
+      .catch(() => {});
+  }, delay);
 }

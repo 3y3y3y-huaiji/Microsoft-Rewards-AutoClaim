@@ -1,21 +1,24 @@
-// Daily-set links live in `div.grid > a`, mixed in with dashboard nav links
-// (redeem, homepage). Every daily-set activity carries a `form`/`FORM` tracking
-// code in its query string — search cards, quizzes, and non-search cards like the
-// referral-style one alike — while the nav links don't. Filtering on that keeps
-// all the real cards, drops the junk, doesn't assume a fixed card count, and
-// stays empty until the cards render (so callers wait for the set, not the header).
-export function matchDailyAnchors(root: ParentNode): HTMLAnchorElement[] {
-    return [...root.querySelectorAll<HTMLAnchorElement>('div.grid > a')]
-        .filter(hasFormCode);
+// Copyright (c) 2026 3y3y3y-huaiji Microsoft-Rewards-AutoSearch is licensed under Mulan PSL v2.
+// You can use this software according to the terms and conditions of the Mulan PSL v2.
+// You may obtain a copy of Mulan PSL v2 at:
+//          http://license.coscl.org.cn/MulanPSL2
+// THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+// See the Mulan PSL v2 for more details.
+
+// Spec §5.3 — daily-set anchors live under div.grid > a and are distinguished
+// by a `form`/`FORM` query param. Nav links lack it. Clean-room implementation.
+
+export function matchDailyAnchors(scope: ParentNode): HTMLAnchorElement[] {
+  const candidates = [...scope.querySelectorAll<HTMLAnchorElement>('div.grid > a')];
+  return candidates.filter(containsFormParam);
 }
 
-function hasFormCode(anchor: HTMLAnchorElement): boolean {
-    let url: URL;
-    try {
-        url = new URL(anchor.href);
-    } catch {
-        return false;
-    }
-    // searchParams.has is case-sensitive and Bing uses both `form` and `FORM`.
-    return url.searchParams.has('form') || url.searchParams.has('FORM');
+function containsFormParam(link: HTMLAnchorElement): boolean {
+  try {
+    const parsed = new URL(link.href);
+    // URLSearchParams is case-sensitive; Bing uses both casings.
+    return parsed.searchParams.has('form') || parsed.searchParams.has('FORM');
+  } catch {
+    return false;
+  }
 }

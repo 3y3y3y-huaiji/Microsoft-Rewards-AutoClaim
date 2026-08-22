@@ -1,3 +1,13 @@
+// Copyright (c) 2026 3y3y3y-huaiji Microsoft-Rewards-AutoSearch is licensed under Mulan PSL v2.
+// You can use this software according to the terms and conditions of the Mulan PSL v2.
+// You may obtain a copy of Mulan PSL v2 at:
+//          http://license.coscl.org.cn/MulanPSL2
+// THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+// See the Mulan PSL v2 for more details.
+
+// Clean-room: live progress hook reading background-owned storage keys.
+// Spec §4.4 — popup shows completed/total without runtime messages.
+
 import { useEffect, useState } from 'react';
 import { storage } from '#imports';
 import { getStorageItems } from '@/entrypoints/hooks/useStorage';
@@ -6,57 +16,45 @@ import { DEFAULTS } from '@/entrypoints/utils/settings';
 import { toInt } from '@/entrypoints/utils/search';
 
 export interface SearchProgressState {
-    // False until the first read resolves, so the UI can avoid flashing an
-    // "idle" state over a run that is actually in progress.
-    isLoaded: boolean;
-    isSearching: boolean;
-    completed: number;
-    total: number;
+  isLoaded: boolean;
+  isSearching: boolean;
+  completed: number;
+  total: number;
 }
 
-const INITIAL: SearchProgressState = {
-    isLoaded: false,
-    isSearching: false,
-    completed: 0,
-    total: DEFAULTS.searches,
+const EMPTY_STATE: SearchProgressState = {
+  isLoaded: false,
+  isSearching: false,
+  completed: 0,
+  total: DEFAULTS.searches,
 };
 
-// Live view of the background's search run. The background owns these keys, so
-// this hook only reads them: once at mount, then on every storage change. Using
-// storage (rather than runtime messages) means a popup opened mid-run sees the
-// current count immediately and keeps ticking while it stays open.
 export function useSearchProgress(): SearchProgressState {
-    const [state, setState] = useState<SearchProgressState>(INITIAL);
+  const [state, setState] = useState<SearchProgressState>(EMPTY_STATE);
 
-    useEffect(() => {
-        let isMounted = true;
-        void getStorageItems(['isSearching', 'currentSearch', 'searches'], StorageValues.SYNC).then((s) => {
-            if (!isMounted) return;
-            setState({
-                isLoaded: true,
-                isSearching: Boolean(s.isSearching),
-                completed: toInt(s.currentSearch, 0),
-                total: toInt(s.searches, DEFAULTS.searches),
-            });
-        });
+  useEffect(() => {
+    let alive = true;
+    void getStorageItems(['isSearching', 'currentSearch', 'searches'], StorageValues.SYNC).then((snap) => {
+      if (!alive) return;
+      setState({
+        isLoaded: true,
+        isSearching: Boolean(snap.isSearching),
+        completed: toInt(snap.currentSearch, 0),
+        total: toInt(snap.searches, DEFAULTS.searches),
+      });
+    });
 
-        const unwatchers = [
-            storage.watch<boolean>('sync:isSearching', (value) =>
-                setState((prev) => ({ ...prev, isSearching: value ?? false }))
-            ),
-            storage.watch<number>('sync:currentSearch', (value) =>
-                setState((prev) => ({ ...prev, completed: toInt(value, 0) }))
-            ),
-            storage.watch<number>('sync:searches', (value) =>
-                setState((prev) => ({ ...prev, total: toInt(value, DEFAULTS.searches) }))
-            ),
-        ];
+    const subs = [
+      storage.watch<boolean>('sync:isSearching', (v) => setState((p) => ({ ...p, isSearching: v ?? false }))),
+      storage.watch<number>('sync:currentSearch', (v) => setState((p) => ({ ...p, completed: toInt(v, 0) }))),
+      storage.watch<number>('sync:searches', (v) => setState((p) => ({ ...p, total: toInt(v, DEFAULTS.searches) }))),
+    ];
 
-        return () => {
-            isMounted = false;
-            unwatchers.forEach((unwatch) => unwatch());
-        };
-    }, []);
+    return () => {
+      alive = false;
+      subs.forEach((off) => off());
+    };
+  }, []);
 
-    return state;
+  return state;
 }

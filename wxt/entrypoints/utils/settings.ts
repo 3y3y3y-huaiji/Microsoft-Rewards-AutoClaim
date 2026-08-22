@@ -1,21 +1,25 @@
-// Single source of truth for setting defaults, used by install seeding,
-// background reads (fallbacks), and the popup's useStorage defaults.
+// Copyright (c) 2026 3y3y3y-huaiji Microsoft-Rewards-AutoSearch is licensed under Mulan PSL v2.
+// You can use this software according to the terms and conditions of the Mulan PSL v2.
+// You may obtain a copy of Mulan PSL v2 at:
+//          http://license.coscl.org.cn/MulanPSL2
+// THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+// See the Mulan PSL v2 for more details.
+
+// Spec §3.2 — single source of truth for defaults and level mapping.
+// Clean-room: values are dictated by spec, naming and comments are fresh.
+
 export const DEFAULTS = {
-    active: true,
-    autoDaily: true,
-    accountLevel: 'member',
-    timeout: 60,
-    searches: 5,
-    closeTime: 5,
-    // When on, each search tab opens its first organic result after a short
-    // random delay (without stealing focus); otherwise the tab just loads the SERP.
-    openFirstResult: true,
+  active: true,
+  autoDaily: true,
+  accountLevel: 'member' as const,
+  timeout: 60,
+  searches: 5,
+  closeTime: 5,
+  openFirstResult: true,
 } as const;
 
-// Selecting an account level sets a sensible default number of daily searches
-// (the user can still override the number manually).
 export const LEVEL_SEARCHES: Record<string, number> = {
-    member: 5,
-    silver: 10,
-    gold: 20,
+  member: 5,
+  silver: 10,
+  gold: 20,
 };

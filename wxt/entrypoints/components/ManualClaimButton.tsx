@@ -1,24 +1,26 @@
+// Copyright (c) 2026 3y3y3y-huaiji Microsoft-Rewards-AutoSearch is licensed under Mulan PSL v2.
+// You can use this software according to the terms and conditions of the Mulan PSL v2.
+// You may obtain a copy of Mulan PSL v2 at:
+//          http://license.coscl.org.cn/MulanPSL2
+// THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+// See the Mulan PSL v2 for more details.
+
 import { browser } from 'wxt/browser';
 
 interface ManualClaimButtonProps {
-    isSearching: boolean;
+  isSearching: boolean;
 }
 
-// "Get rewards" starts a run; while one is running it flips to "Stop searches".
-// The background owns the run state, so this button is purely controlled: it
-// sends the request and lets the state come back through storage — a local
-// optimistic flip could disagree with a run that never actually started (a
-// daily-set-only run makes no searches).
 function ManualClaimButton({ isSearching }: ManualClaimButtonProps) {
-    function handleClick() {
-        browser.runtime.sendMessage({ action: isSearching ? 'stop' : 'popup' });
-    }
+  const onClick = (): void => {
+    browser.runtime.sendMessage({ action: isSearching ? 'stop' : 'popup' });
+  };
 
-    return (
-        <button id="button" className={`btn my-1 ${isSearching ? 'btn-fail' : 'btn-success'}`} onClick={handleClick}>
-            {isSearching ? '停止搜索' : '开始获取奖励'}
-        </button>
-    );
+  return (
+    <button id="button" className={`btn my-1 ${isSearching ? 'btn-fail' : 'btn-success'}`} onClick={onClick}>
+      {isSearching ? '停止搜索' : '开始获取奖励'}
+    </button>
+  );
 }
 
 export default ManualClaimButton;
