@@ -5,7 +5,7 @@
 ## 0. 商用红线（必读）
 
 - **上游 `spin311/MicrosoftRewardsWebsite` 无 License**（`upstream` remote 已验证可 `git fetch`），代码版权归原作者。**禁止**直接复制上游代码去商用，必须**全新重实现/重构**（clean-room）。
-- 本仓库 `origin` 为 `3y3y3y-huaiji/Microsoft-Rewards-AutoSearch`，新增汉化/文档以 `CC BY 4.0` 共享，但这**不覆盖**上游代码的授权缺口。重构后的 Chromium 插件需保留自有版权头与新 License。
+- 本仓库 `origin` 为 `3y3y3y-huaiji/Microsoft-Rewards-AutoSearch`，**全新重构部分以木兰宽松许可证 v2（Mulan PSL v2，SPDX: MulanPSL-2.0，`LICENSE`）开源**，支持商用；历史汉化文本曾以 `CC BY 4.0` 共享，现统一为 MulanPSL-2.0。上游无 License 的代码仍归原作者，不在本仓库主张权利。
 - 本次目标产物是 **Chromium MV3 插件**（`wxt`），`microsoft_rewards_app`（Flutter）与历史 `chrome/`/`firefox/` 目录已废弃，重构时**不要**回迁旧代码。
 
 ## 1. 仓库现状（2026-08-22）

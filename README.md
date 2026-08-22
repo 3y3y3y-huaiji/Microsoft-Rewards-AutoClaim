@@ -1,6 +1,6 @@
 # 微软 Rewards 自动搜索助手 (Microsoft Rewards AutoSearch)
 
-[![License: CC BY 4.0](https://img.shields.io/badge/原创内容协议-CC_BY_4.0-lightgrey.svg)](https://creativecommons.org/licenses/by/4.0/)
+[![License: MulanPSL2](https://img.shields.io/badge/License-MulanPSL2-blue.svg)](./LICENSE)
 [![Framework: WXT](https://img.shields.io/badge/Framework-WXT-green.svg)](https://github.com/wxt-dev/wxt)
 [![Language: TypeScript](https://img.shields.io/badge/Language-TypeScript-blue.svg)](https://github.com/microsoft/TypeScript)
 [![Tests: 39 Passed](https://img.shields.io/badge/Tests-39%20Passed-brightgreen.svg)]()
@@ -119,8 +119,8 @@ A: 是的，本项目 100% 开源，无任何隐藏收费或商业广告。详�
 
 本项目为 [spin311/MicrosoftRewardsWebsite](https://github.com/spin311/MicrosoftRewardsWebsite) 的 Fork 版本。
 
-**原项目目前未设置开源协议，其代码版权归原作者 [spin311](https://github.com/spin311) 所有。**
+**原上游项目目前未设置开源协议，其代码版权归原作者 [spin311](https://github.com/spin311) 所有，本仓库不对其主张权利。**
 
-本仓库新增的原创内容（包括汉化文本、中文文档、注释等）以 [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) 协议共享。
+本仓库**全新重实现/重构**的代码及新增的汉化、文档以 **木兰宽松许可证，第2版（Mulan PSL v2）** 开源，详见根目录 [`LICENSE`](./LICENSE)（SPDX: `MulanPSL-2.0`，http://license.coscl.org.cn/MulanPSL2）。重构后的 Chromium 扩展按此协议可自由使用、修改、分发及商用（需保留版权与许可证副本）。
 
-> 如需使用本仓库中来自上游的代码，请直接联系原作者 spin311 确认授权。
+> 旧提交中 `CC BY 4.0` 仅覆盖历史汉化文本，自本版起统一为 Mulan PSL v2。
