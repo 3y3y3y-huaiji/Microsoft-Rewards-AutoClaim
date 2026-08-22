@@ -1,4 +1,4 @@
-# 微软 Rewards 自动搜索助手 (Microsoft Rewards AutoSearch)
+# 微软自动领取积分 (Microsoft Rewards AutoClaim)
 
 [![License: MulanPSL2](https://img.shields.io/badge/License-MulanPSL2-blue.svg)](./LICENSE)
 [![Framework: WXT](https://img.shields.io/badge/Framework-WXT-green.svg)](https://github.com/wxt-dev/wxt)
@@ -7,9 +7,9 @@
 
 ## 📖 项目简介 (Overview)
 
-**微软 Rewards 自动搜索助手 (Microsoft Rewards AutoSearch)** 是一款 100% 纯净无广告、完全开源的 Microsoft Rewards 自动化搜索工具。基于现代化的 WXT 框架与 React + TypeScript 构建，旨在帮助广大微软 Rewards 用户安全、高效、自动化地获取每日 Bing 搜索积分。
+**微软自动领取积分 (Microsoft Rewards AutoClaim)** 是基于 **木兰宽松许可证 v2（Mulan PSL v2）** 全新 clean-room 重构的 Microsoft Rewards 自动化工具。基于 WXT + React + TypeScript，支持桌面端/移动端 Bing 搜索与每日任务一键领取，默认无广告、经用户显式同意后可在扩展自有界面展示静态推广（不注入 Bing 页面）。
 
-本项目基于 [spin311/MicrosoftRewardsWebsite](https://github.com/spin311/MicrosoftRewardsWebsite) Fork 而来，采用 100% GitHub 原生集成，在原版基础上进行了全面汉化与工程整理，工程轻量纯粹。
+本项目行为参考 [spin311/MicrosoftRewardsWebsite](https://github.com/spin311/MicrosoftRewardsWebsite)，但**未复制其代码**，全部重实现以满足商用合规。
 
 ---
 
@@ -19,7 +19,7 @@
 - 🎁 **任务集一键领取 (Task Set Claims)**：支持自动识别并辅助完成 Rewards 仪表盘中的每日任务集（Daily Sets）与额外活动卡片。
 - ⏱️ **随机延迟安全防护 (Random Delay Safety)**：内建智能随机搜索间隔与标签页留存等待，模拟真实人类操作习惯，保障账号安全。
 - 👑 **会员等级预设 (Membership Presets)**：内置 Level 1（PC 10次 / 30分）、Level 2（PC 30次 / 90分 + 移动端 20次 / 60分）以及自定义策略预设，一键快速切换。
-- 🛡️ **100% 纯净无广告 (100% Ad-Free)**：无第三方软件推荐、无弹窗广告、无私货推导，打造极致纯粹的使用体验。
+- 📢 **可选广告支持 (Opt-in Ads)**：默认关闭，仅在用户显式同意后在扩展自有界面（popup）展示静态推广，不向 `bing.com` / `rewards.bing.com` 注入任何内容。
 
 ---
 
@@ -89,7 +89,7 @@ A: 1. 请确认您已在 Edge/Bing 中登录了微软账号；
 3. 检查扩展设置中的搜索次数是否符合您当前账户等级（Level 1 每日最高 30 分，Level 2 最高 90 分 PC + 60 分 移动端）。
 
 **Q: 插件是完全免费且开源的吗？**  
-A: 是的，本项目 100% 开源，无任何隐藏收费或商业广告。详见版权与协议说明章节。
+A: 是的，本项目以 Mulan PSL v2 开源，可自由使用、修改与商用。广告为可选且默认关闭，不影响核心功能，详见版权与协议说明章节。
 
 ---
 
@@ -103,15 +103,15 @@ A: 是的，本项目 100% 开源，无任何隐藏收费或商业广告。详�
 
 ---
 
-## 🍴 Fork 声明 (Fork Declaration)
+## 🍴 来源声明 (Origin Declaration)
 
-本项目 Fork 自原始上游仓库，并在其基础上进行了以下改进：
+本项目行为参考 [spin311/MicrosoftRewardsWebsite](https://github.com/spin311/MicrosoftRewardsWebsite)，但为满足商用合规已做 **clean-room 全新重实现**，未复制上游代码。
 
-- 🌐 **全面汉化**：将界面、文档及注释翻译为简体中文，以服务中文用户群体。
-- ⚙️ **功能优化**：对部分核心逻辑进行重构和性能改进。
-- 📦 **工程整理**：重新组织项目结构，补充完善测试套件与构建流程。
+- 🌐 **全面汉化**：界面、文档与注释为简体中文
+- ⚙️ **重构实现**：WXT MV3 + React 19 + TypeScript 5.8 全新实现
+- 📦 **工程化**：Vitest 测试、双浏览器构建、GitHub Actions CI
 
-感谢原作者 [spin311](https://github.com/spin311) 的开源贡献。
+感谢原作者 [spin311](https://github.com/spin311) 的思路启发。
 
 ---
 
