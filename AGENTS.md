@@ -47,13 +47,13 @@ npm run dev:firefox    # Firefox 调试
 
 - **Remotes**：`origin`（可推）与 `upstream`（只读上游）。不要把 `upstream` 误推。
 - **分支**：`master`（主线）、`safe-zh-cn`（零破坏汉化）、`dev`（WXT 0.21 升级线）、`add-mit-license`。重构新工作应在**新建**分支/工作树上进行。
-- **工作树**：用户要求“创建 git 工作树方便多进度修改”。示例：
+- **工作树**：已在仓库内 `.worktrees/` 下创建 3 个并行工作树（`git worktree list` 可见）：
   ```bash
-  git worktree add ../rewards-rewrite-1 -b rewrite/clean-core master
-  git worktree add ../rewards-rewrite-2 -b rewrite/ui-i18n master
-  git worktree list  # 当前仅主工作树
+  git worktree add .worktrees/rewards-core -b rewrite/clean-core master  # 扩展内核 clean-room
+  git worktree add .worktrees/rewards-ui-ads -b feat/ads-optin master    # 广告/汉化
+  git worktree add .worktrees/rewards-mobile -b rewrite/mobile master    # Flutter 手机端
   ```
-  每个工作树独立 `npm ci`，改动通过 `origin` PR 同步；禁止直接在 `master` 上做重构大改。
+  每个工作树独立 `npm ci`，改动通过 `origin` PR 同步；禁止直接在 `master` 上做重构大改。`.worktrees/` 已加入 `.gitignore`。
 - **整理顺序**：先 `git status --short` 确认脏文件 → 归档/删除 `.agents/` 流水、将 `builds/` 移出版本控制 → 补 `.gitignore` → 再建工作树。`PROJECT.md`/`ORIGINAL_REQUEST.md` 为过程文档，重构完成后归档到 `docs/` 或删除。
 - 提交前必跑：`npm run compile && npm run test && npm run build && npm run build:firefox`（CI 的 `extension` job 顺序，见 `.github/workflows/ci.yml:22`）。
 
