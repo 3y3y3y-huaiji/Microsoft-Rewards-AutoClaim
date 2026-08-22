@@ -18,3 +18,9 @@ gulpfile.js
 # do not commit. (History cleanup for already-committed binaries is a separate task.)
 *.zip
 *.apk
+
+# local AI agent logs & build outputs — never commit
+.agents/
+builds/
+wxt/dist/
+wxt/.wxt/
