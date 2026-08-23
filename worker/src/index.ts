@@ -12,7 +12,7 @@ export default {
           id: "promo-main",
           title: "精选 CPS 优惠合集",
           img: "https://via.placeholder.com/320x90?text=CPS+Promo",
-          link: "https://你的域名/promo.html",
+          link: "https://challenge.ccwu.cc/",
           desc: "点击查看全部 CPS 返利"
         }
       ];
