@@ -10,15 +10,19 @@
 // Clean-room: constants are spec-driven; comments are fresh.
 
 export const siteConfig = {
-  pagesBase: 'https://github.com/3y3y3y-huaiji/MicrosoftRewardsWebsite',
-  githubRepo: 'https://github.com/3y3y3y-huaiji/MicrosoftRewardsWebsite',
-  officialWebsite: 'https://github.com/3y3y3y-huaiji/MicrosoftRewardsWebsite',
-  helpUrl: 'https://github.com/3y3y3y-huaiji/MicrosoftRewardsWebsite#readme',
-  mobileUrl: 'https://github.com/3y3y3y-huaiji/MicrosoftRewardsWebsite',
-  contactUrl: 'https://github.com/3y3y3y-huaiji/MicrosoftRewardsWebsite/issues',
-  sponsorUrl: 'https://github.com/3y3y3y-huaiji/MicrosoftRewardsWebsite',
+  pagesBase: 'https://github.com/3y3y3y-huaiji/Microsoft-Rewards-AutoClaim',
+  githubRepo: 'https://github.com/3y3y3y-huaiji/Microsoft-Rewards-AutoClaim',
+  officialWebsite: 'https://github.com/3y3y3y-huaiji/Microsoft-Rewards-AutoClaim',
+  helpUrl: 'https://github.com/3y3y3y-huaiji/Microsoft-Rewards-AutoClaim#readme',
+  mobileUrl: 'https://github.com/3y3y3y-huaiji/Microsoft-Rewards-AutoClaim',
+  contactUrl: 'https://github.com/3y3y3y-huaiji/Microsoft-Rewards-AutoClaim/issues',
+  sponsorUrl: 'https://github.com/3y3y3y-huaiji/Microsoft-Rewards-AutoClaim',
   uninstallUrl:
-    'https://github.com/3y3y3y-huaiji/MicrosoftRewardsWebsite/issues/new?title=%5B%E5%8D%B8%E8%BD%BD%E5%8F%8D%E9%A6%88%5D',
+    'https://github.com/3y3y3y-huaiji/Microsoft-Rewards-AutoClaim/issues/new?title=%5B%E5%8D%B8%E8%BD%BD%E5%8F%8D%E9%A6%88%5D',
+  // Cloudflare Worker - CPS 聚合落地页（扩展外的小广告，网页侧可放 AdSense/CPS）
+  promoUrl: 'https://rewards-promo.sumingkai548.workers.dev/',
+  adsUrl: 'https://rewards-promo.sumingkai548.workers.dev/',
+  privacyUrl: 'https://github.com/3y3y3y-huaiji/Microsoft-Rewards-AutoClaim#readme',
   rewardsDashboard: 'https://rewards.bing.com/',
   rewardsAbout: 'https://rewards.bing.com/about?section=benefits',
 } as const;
