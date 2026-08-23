@@ -16,7 +16,7 @@ export const siteConfig = {
   helpUrl: 'https://github.com/3y3y3y-huaiji/Microsoft-Rewards-AutoClaim#readme',
   mobileUrl: 'https://github.com/3y3y3y-huaiji/Microsoft-Rewards-AutoClaim',
   contactUrl: 'https://github.com/3y3y3y-huaiji/Microsoft-Rewards-AutoClaim/issues',
-  sponsorUrl: 'https://github.com/3y3y3y-huaiji/Microsoft-Rewards-AutoClaim',
+  sponsorUrl: 'https://challenge.ccwu.cc/',
   uninstallUrl:
     'https://github.com/3y3y3y-huaiji/Microsoft-Rewards-AutoClaim/issues/new?title=%5B%E5%8D%B8%E8%BD%BD%E5%8F%8D%E9%A6%88%5D',
   // Cloudflare Worker - CPS 聚合落地页（大陆主域名 challenge.ccwu.cc，workers.dev 备用）
