@@ -128,21 +128,21 @@ export default {
       <img src="https://via.placeholder.com/300x180/CC0000/FFFFFF?text=京东+家电" class="w-full h-36 object-cover">
       <div class="p-3"><div class="text-xs text-red-700 font-bold">京东</div><div class="text-sm font-medium mt-1">美的电压力锅 限时 199（经 JD 联盟转链）</div><div class="flex items-center justify-between mt-2"><span class="text-red-600 font-bold text-sm">¥199</span><span class="text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded">秒杀</span></div></div>
     </a>
-    <!-- 拼多多 -->
-    <a href="https://你的_拼多多_PID_链接1" target="_blank" rel="noopener" class="card platform-pdd bg-white rounded-xl overflow-hidden border" data-platform="pdd" data-title="拼多多 水果">
+    <!-- 拼多多（PID 44279889_315276894，多多进宝） -->
+    <a href="https://mobile.yangkeduo.com/duo_cms_mall?pid=44279889_315276894&goods_id=1000001" target="_blank" rel="noopener" class="card platform-pdd bg-white rounded-xl overflow-hidden border" data-platform="pdd" data-title="拼多多 水果">
       <img src="https://via.placeholder.com/300x180/EC2E25/FFFFFF?text=拼多多+水果" class="w-full h-36 object-cover">
       <div class="p-3"><div class="text-xs text-red-600 font-bold">拼多多</div><div class="text-sm font-medium mt-1">烟台红富士 10斤 29.9 包邮</div><div class="flex items-center justify-between mt-2"><span class="text-red-600 font-bold text-sm">¥29.9</span><span class="text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded">万人团</span></div></div>
     </a>
-    <a href="https://你的_拼多多_PID_链接2" target="_blank" rel="noopener" class="card platform-pdd bg-white rounded-xl overflow-hidden border" data-platform="pdd" data-title="拼多多 日用">
+    <a href="https://mobile.yangkeduo.com/duo_cms_mall?pid=44279889_315276894&goods_id=1000002" target="_blank" rel="noopener" class="card platform-pdd bg-white rounded-xl overflow-hidden border" data-platform="pdd" data-title="拼多多 日用">
       <img src="https://via.placeholder.com/300x180/FF6B6B/FFFFFF?text=拼多多+日用" class="w-full h-36 object-cover">
       <div class="p-3"><div class="text-xs text-red-600 font-bold">拼多多</div><div class="text-sm font-medium mt-1">抽纸 30包 19.9 元</div><div class="flex items-center justify-between mt-2"><span class="text-red-600 font-bold text-sm">¥19.9</span><span class="text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded">百亿补贴</span></div></div>
     </a>
-    <!-- 唯品会 -->
-    <a href="https://你的_唯品会_PID_链接1" target="_blank" rel="noopener" class="card platform-vip bg-white rounded-xl overflow-hidden border" data-platform="vip" data-title="唯品会 品牌鞋">
+    <!-- 唯品会（PID 222d19f056970a953c642bf01431b7e0） -->
+    <a href="https://www.vip.com/service/restpage?pid=222d19f056970a953c642bf01431b7e0&goods_id=vip001" target="_blank" rel="noopener" class="card platform-vip bg-white rounded-xl overflow-hidden border" data-platform="vip" data-title="唯品会 品牌鞋">
       <img src="https://via.placeholder.com/300x180/DE2A91/FFFFFF?text=唯品会+鞋靴" class="w-full h-36 object-cover">
       <div class="p-3"><div class="text-xs text-pink-600 font-bold">唯品会</div><div class="text-sm font-medium mt-1">Nike 运动鞋 3.2 折 299</div><div class="flex items-center justify-between mt-2"><span class="text-red-600 font-bold text-sm">¥299</span><span class="text-xs bg-pink-100 text-pink-700 px-2 py-0.5 rounded">品牌特卖</span></div></div>
     </a>
-    <a href="https://你的_唯品会_PID_链接2" target="_blank" rel="noopener" class="card platform-vip bg-white rounded-xl overflow-hidden border" data-platform="vip" data-title="唯品会 美妆">
+    <a href="https://www.vip.com/service/restpage?pid=222d19f056970a953c642bf01431b7e0&goods_id=vip002" target="_blank" rel="noopener" class="card platform-vip bg-white rounded-xl overflow-hidden border" data-platform="vip" data-title="唯品会 美妆">
       <img src="https://via.placeholder.com/300x180/FF69B4/FFFFFF?text=唯品会+美妆" class="w-full h-36 object-cover">
       <div class="p-3"><div class="text-xs text-pink-600 font-bold">唯品会</div><div class="text-sm font-medium mt-1">雅诗兰黛小棕瓶 7.5 折</div><div class="flex items-center justify-between mt-2"><span class="text-red-600 font-bold text-sm">¥589</span><span class="text-xs bg-pink-100 text-pink-700 px-2 py-0.5 rounded">限量</span></div></div>
     </a>
