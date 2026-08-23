@@ -1,0 +1,6 @@
+name = "rewards-promo"
+main = "src/index.ts"
+compatibility_date = "2024-08-01"
+
+# 绑定后通过 https://rewards-promo.<你的子域>.workers.dev 访问
+# 后续在 Cloudflare Dashboard 绑定自定义域名如 promo.你的域名.com
